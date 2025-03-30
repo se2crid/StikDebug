@@ -16,6 +16,8 @@ struct HeartbeatApp: App {
     @State private var isPairing = false
     @State private var heartBeat = false
     @State private var error: Int32? = nil
+    @State private var show_error = false
+    @State private var error_string = ""
     @StateObject private var mount = MountingProgress.shared
     
     let urls: [String] = [
@@ -118,9 +120,21 @@ struct HeartbeatApp: App {
                         for (index, urlString) in urls.enumerated() {
                             let destinationURL = URL.documentsDirectory.appendingPathComponent(outputFiles[index])
                             if !fileManager.fileExists(atPath: destinationURL.path) {
-                                downloadFile(from: urlString, to: destinationURL)
+                                downloadFile(from: urlString, to: destinationURL){ result in
+                                    if (result != ""){
+                                        error_string = "[Download DDI Error]: " + result
+                                        show_error = true
+                                    }
+                                    
+                                }
+
                             }
                         }
+                    }
+                    .alert("An Error Occurred", isPresented: $show_error) {
+                        Button("OK", role: .cancel) { }
+                    } message: {
+                        Text(error_string)
                     }
             }
         }
@@ -384,25 +398,30 @@ public func showAlert(title: String, message: String, showOk: Bool, showTryAgain
     }
 }
 
-func downloadFile(from urlString: String, to destinationURL: URL) {
+func downloadFile(from urlString: String, to destinationURL: URL,completion: @escaping (String) -> Void){
     let fileManager = FileManager.default
     let documentsDirectory = URL.documentsDirectory
     guard let url = URL(string: urlString) else {
         print("Invalid URL: \(urlString)")
+        completion("[Internal Invalid URL error]")
         return
     }
     let task = URLSession.shared.downloadTask(with: url) { (tempLocalUrl, response, error) in
         guard let tempLocalUrl = tempLocalUrl, error == nil else {
             print("Error downloading file from \(urlString): \(String(describing: error))")
+            completion("Are you connected to the internet? [Download Failed]")
             return
         }
         do {
             try fileManager.createDirectory(at: destinationURL.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
             try fileManager.moveItem(at: tempLocalUrl, to: destinationURL)
             print("Downloaded \(urlString) to \(destinationURL.path)")
+            
         } catch {
             print("Error saving file: \(error)")
+            
         }
     }
     task.resume()
+    completion("")
 }
