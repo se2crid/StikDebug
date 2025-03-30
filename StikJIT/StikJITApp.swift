@@ -78,7 +78,9 @@ struct HeartbeatApp: App {
                                     }
                                 }
                             } else if let error {
-                                showAlert(title: "Error", message: "EM Proxy Failed to start \(error)", showOk: true) { _ in }
+                                showAlert(title: "Error", message: "EM Proxy Failed to start \(error)", showOk: true) { cool in
+                                    
+                                }
                             }
                         }
                     }
@@ -119,11 +121,13 @@ struct HeartbeatApp: App {
                             let destinationURL = URL.documentsDirectory.appendingPathComponent(outputFiles[index])
                             if !fileManager.fileExists(atPath: destinationURL.path) {
                                 downloadFile(from: urlString, to: destinationURL){ result in
-                                    if result != "" {
+                                    if (result != ""){
                                         error_string = "[Download DDI Error]: " + result
                                         show_error = true
                                     }
+                                    
                                 }
+
                             }
                         }
                     }
@@ -159,9 +163,7 @@ struct HeartbeatApp: App {
         let port = NWEndpoint.Port(rawValue: 62078)!
         let connection = NWConnection(host: host, port: port, using: .tcp)
         
-        // Create a variable to hold the timeout work item
         var timeoutWorkItem: DispatchWorkItem?
-        
         timeoutWorkItem = DispatchWorkItem { [weak connection] in
             if connection?.state != .ready {
                 connection?.cancel()
@@ -396,7 +398,7 @@ public func showAlert(title: String, message: String, showOk: Bool, showTryAgain
     }
 }
 
-func downloadFile(from urlString: String, to destinationURL: URL, completion: @escaping (String) -> Void) {
+func downloadFile(from urlString: String, to destinationURL: URL,completion: @escaping (String) -> Void){
     let fileManager = FileManager.default
     let documentsDirectory = URL.documentsDirectory
     guard let url = URL(string: urlString) else {
@@ -414,8 +416,10 @@ func downloadFile(from urlString: String, to destinationURL: URL, completion: @e
             try fileManager.createDirectory(at: destinationURL.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
             try fileManager.moveItem(at: tempLocalUrl, to: destinationURL)
             print("Downloaded \(urlString) to \(destinationURL.path)")
+            
         } catch {
             print("Error saving file: \(error)")
+            
         }
     }
     task.resume()
