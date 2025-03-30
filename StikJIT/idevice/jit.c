@@ -7,7 +7,6 @@
 
 // Jackson Coxson
 
-#include "idevice.h"
 #include <arpa/inet.h>
 #include <inttypes.h>
 #include <stdio.h>

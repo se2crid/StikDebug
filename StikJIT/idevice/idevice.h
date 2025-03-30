@@ -116,6 +116,8 @@ typedef struct ProcessControlAdapterHandle ProcessControlAdapterHandle;
  */
 typedef struct RemoteServerAdapterHandle RemoteServerAdapterHandle;
 
+typedef struct SpringBoardServicesClientHandle SpringBoardServicesClientHandle;
+
 typedef struct TcpProviderHandle TcpProviderHandle;
 
 typedef struct UsbmuxdAddrHandle UsbmuxdAddrHandle;
@@ -2008,5 +2010,36 @@ enum IdeviceErrorCode idevice_usbmuxd_unix_addr_new(const char *addr,
  * or NULL (in which case this function does nothing)
  */
 void idevice_usbmuxd_addr_free(struct UsbmuxdAddrHandle *usbmuxd_addr);
+
+enum IdeviceErrorCode springboard_services_proxy_connect_tcp(struct TcpProviderHandle *provider,
+                                                             struct SpringBoardServicesClientHandle **client);
+
+enum IdeviceErrorCode springboard_services_proxy_connect_usbmuxd(struct UsbmuxdProviderHandle *provider,
+                                                                 struct SpringBoardServicesClientHandle **client);
+
+enum IdeviceErrorCode springboard_services_proxy_new(struct IdeviceHandle *socket,
+                                                     struct SpringBoardServicesClientHandle **client);
+
+/**
+ * Gets the icon of the specified app by bundle identifier
+ *
+ * # Arguments
+ * * `client` - A valid SpringBoardServicesClient handle
+ * * `bundle_identifier` - The identifiers of the app to get icon
+ * * `out_result` - On success, will be set to point to a newly allocated png data
+ *
+ * # Returns
+ * An error code indicating success or failure
+ *
+ * # Safety
+ * `client` must be a valid pointer to a handle allocated by this library
+ * `out_result` must be a valid, non-null pointer to a location where the result will be stored
+ */
+enum IdeviceErrorCode springboard_services_proxy_get_icon(struct SpringBoardServicesClientHandle *client,
+                                                          const char *bundle_identifier,
+                                                          void **out_result,
+                                                          size_t *out_result_len);
+
+void springboard_services_proxy_free(struct SpringBoardServicesClientHandle *handle);
 
 #endif
