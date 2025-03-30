@@ -288,7 +288,7 @@ class InstalledAppsViewModel: ObservableObject {
     
     func loadApps() {
         do {
-            self.apps = try JITEnableContext.shared().getAppList()
+            self.apps = try JITEnableContext.shared.getAppList()
         } catch {
             print(error)
             self.apps = [:]

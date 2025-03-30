@@ -16,6 +16,8 @@ struct HeartbeatApp: App {
     @State private var isPairing = false
     @State private var heartBeat = false
     @State private var error: Int32? = nil
+    @State private var show_error = false
+    @State private var error_string = ""
     @StateObject private var mount = MountingProgress.shared
     
     let urls: [String] = [
@@ -43,14 +45,7 @@ struct HeartbeatApp: App {
             if isLoading {
                 LoadingView()
                     .onAppear {
-                        if !isConnectedToWifi() {
-                            showAlert(title: "Connection Required",
-                                    message: "Please connect to WiFi to continue",
-                                    showOk: true) { _ in
-                                exit(0)
-                            }
-                            return
-                        }
+                        // Removed WiFi check
                         startProxy() { result, error in
                             if result {
                                 checkVPNConnection() { result, vpn_error in
@@ -89,9 +84,8 @@ struct HeartbeatApp: App {
                             }
                         }
                     }
-                    .fileImporter(isPresented: $isPairing, allowedContentTypes: [UTType(filenameExtension: "mobiledevicepairing", conformingTo: .data)!, .propertyList]) {result in
+                    .fileImporter(isPresented: $isPairing, allowedContentTypes: [UTType(filenameExtension: "mobiledevicepairing", conformingTo: .data)!, .propertyList]) { result in
                         switch result {
-                            
                         case .success(let url):
                             let fileManager = FileManager.default
                             let accessing = url.startAccessingSecurityScopedResource()
@@ -121,28 +115,37 @@ struct HeartbeatApp: App {
                     }
             } else {
                 MainTabView()
-                    .onAppear() {
+                    .onAppear {
                         let fileManager = FileManager.default
                         for (index, urlString) in urls.enumerated() {
                             let destinationURL = URL.documentsDirectory.appendingPathComponent(outputFiles[index])
                             if !fileManager.fileExists(atPath: destinationURL.path) {
-                                downloadFile(from: urlString, to: destinationURL)
+                                downloadFile(from: urlString, to: destinationURL){ result in
+                                    if (result != ""){
+                                        error_string = "[Download DDI Error]: " + result
+                                        show_error = true
+                                    }
+                                    
+                                }
+
                             }
                         }
-                        
+                    }
+                    .alert("An Error Occurred", isPresented: $show_error) {
+                        Button("OK", role: .cancel) { }
+                    } message: {
+                        Text(error_string)
                     }
             }
         }
     }
     
-
     func startProxy(callback: @escaping (Bool, Int?) -> Void) {
         let port = 51820
         let bindAddr = "127.0.0.1:\(port)"
         
         DispatchQueue.global(qos: .background).async {
             let result = start_emotional_damage(bindAddr)
-
             DispatchQueue.main.async {
                 if result == 0 {
                     print("DEBUG: em_proxy started successfully on port \(port)")
@@ -158,17 +161,13 @@ struct HeartbeatApp: App {
     private func checkVPNConnection(callback: @escaping (Bool, String?) -> Void) {
         let host = NWEndpoint.Host("10.7.0.1")
         let port = NWEndpoint.Port(rawValue: 62078)!
-        
         let connection = NWConnection(host: host, port: port, using: .tcp)
         
-        // Create a variable to hold the timeout work item
         var timeoutWorkItem: DispatchWorkItem?
-        
         timeoutWorkItem = DispatchWorkItem { [weak connection] in
             if connection?.state != .ready {
                 connection?.cancel()
                 DispatchQueue.main.async {
-                    // Only call back if we haven't already
                     if timeoutWorkItem?.isCancelled == false {
                         callback(false, "[TIMEOUT] Wireguard is not connected. Try closing this app, turn Wireguard off and back on.")
                     }
@@ -179,21 +178,17 @@ struct HeartbeatApp: App {
         connection.stateUpdateHandler = { [weak connection] state in
             switch state {
             case .ready:
-                // Connection succeeded - cancel the timeout
                 timeoutWorkItem?.cancel()
                 connection?.cancel()
                 DispatchQueue.main.async {
                     callback(true, nil)
                 }
             case .failed(let error):
-                // Connection failed - cancel the timeout
                 timeoutWorkItem?.cancel()
                 connection?.cancel()
                 DispatchQueue.main.async {
-                    if error == NWError.posix(.ETIMEDOUT) {
-                        callback(false, "Wireguard is not connected. Try closing the app, turn it off and back on.")
-                    } else if error == NWError.posix(.ECONNREFUSED) {
-                        callback(false, "Wifi is not connected. StikJIT won't work on cellular data.")
+                    if error == NWError.posix(.ETIMEDOUT) || error == NWError.posix(.ECONNREFUSED) {
+                        callback(false, "Wireguard is not connected. Try closing the app and restarting Wireguard.")
                     } else {
                         callback(false, "em proxy check error: \(error.localizedDescription)")
                     }
@@ -203,35 +198,14 @@ struct HeartbeatApp: App {
             }
         }
         
-        // Start the connection
         connection.start(queue: .global())
         
-        // Schedule the timeout
         if let workItem = timeoutWorkItem {
             DispatchQueue.global().asyncAfter(deadline: .now() + 20, execute: workItem)
         }
     }
     
-    func isConnectedToWifi() -> Bool {
-        var isWifi = false
-            let monitor = NWPathMonitor(requiredInterfaceType: .wifi)
-            let semaphore = DispatchSemaphore(value: 0)
-            
-            monitor.pathUpdateHandler = { path in
-                isWifi = path.status == .satisfied
-                semaphore.signal()
-            }
-            
-            let queue = DispatchQueue(label: "WiFiCheckQueue")
-            monitor.start(queue: queue)
-            
-            // Wait for the result with a timeout to avoid hanging
-            let result = semaphore.wait(timeout: .now() + 2)
-            monitor.cancel()
-            
-            // Return false if we timed out
-            return result == .success && isWifi
-    }
+    // Removed isConnectedToWifi() function as it is no longer needed.
 }
 
 var pubHeartBeat = false
@@ -241,18 +215,15 @@ actor FunctionGuard<T> {
 
     func execute(_ work: @escaping @Sendable () -> T) async -> T {
         if let task = runningTask {
-            return await task.value // If already running, wait for the existing result
+            return await task.value
         }
-
-        let task = Task.detached { work() } // Run in the background
+        let task = Task.detached { work() }
         runningTask = task
         let result = await task.value
         runningTask = nil
         return result
     }
 }
-
-
 
 class MountingProgress: ObservableObject {
     static var shared = MountingProgress()
@@ -279,7 +250,6 @@ class MountingProgress: ObservableObject {
     
     private func mount() {
         self.coolisMounted = isMounted()
-        
         let fileManager = FileManager.default
         let pairingpath = URL.documentsDirectory.appendingPathComponent("pairingFile.plist").path
         
@@ -290,10 +260,13 @@ class MountingProgress: ObservableObject {
             }
             
             mountingThread = Thread {
-                let mount = mountPersonalDDI(imagePath: URL.documentsDirectory.appendingPathComponent("DDI/Image.dmg").path, trustcachePath: URL.documentsDirectory.appendingPathComponent("DDI/Image.dmg.trustcache").path, manifestPath: URL.documentsDirectory.appendingPathComponent("DDI/BuildManifest.plist").path, pairingFilePath: pairingpath)
+                let mount = mountPersonalDDI(imagePath: URL.documentsDirectory.appendingPathComponent("DDI/Image.dmg").path,
+                                             trustcachePath: URL.documentsDirectory.appendingPathComponent("DDI/Image.dmg.trustcache").path,
+                                             manifestPath: URL.documentsDirectory.appendingPathComponent("DDI/BuildManifest.plist").path,
+                                             pairingFilePath: pairingpath)
                 
                 if mount != 0 {
-                    showAlert(title: "Error", message: "An Error Occured when Mounting the DDI\nError Code: " + String(mount), showOk: true, showTryAgain: true) { cool in
+                    showAlert(title: "Error", message: "An Error Occured when Mounting the DDI\nError Code: \(mount)", showOk: true, showTryAgain: true) { cool in
                         if cool {
                             self.mount()
                         }
@@ -328,39 +301,32 @@ func startHeartbeatInBackground() {
         let completionHandler: @convention(block) (Int32, String?) -> Void = { result, message in
             if result == 0 {
                 print("Heartbeat started successfully: \(message ?? "")")
-                
                 pubHeartBeat = true
-                
                 if FileManager.default.fileExists(atPath: URL.documentsDirectory.appendingPathComponent("DDI/Image.dmg.trustcache").path) {
                     MountingProgress.shared.pubMount()
                 }
             } else {
                 print("Error: \(message ?? "") (Code: \(result))")
-                
                 DispatchQueue.main.async {
                     if let mainWindow = UIApplication.shared.windows.last {
                         let alert = UIAlertController(title: "Heartbeat Error", message: "\(message ?? "") (\(result))", preferredStyle: .alert)
-                        
                         let tryAgainAction = UIAlertAction(title: "Try Again", style: .default) { _ in
                             startHeartbeatInBackground()
                         }
-
                         alert.addAction(tryAgainAction)
-                        
                         mainWindow.rootViewController?.present(alert, animated: true, completion: nil)
                     }
                 }
             }
         }
         
-        JITEnableContext.shared().startHeartbeat(completionHandler: completionHandler, logger: nil)
+        JITEnableContext.shared.startHeartbeat(completionHandler: completionHandler, logger: nil)
     }
     
     heartBeat.qualityOfService = .background
     heartBeat.name = "Heartbeat"
     heartBeat.start()
 }
-
 
 struct LoadingView: View {
     @State private var animate = false
@@ -409,61 +375,53 @@ public func showAlert(title: String, message: String, showOk: Bool, showTryAgain
     DispatchQueue.main.async {
         if let mainWindow = UIApplication.shared.windows.last {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            
             if showOk, !showTryAgain {
                 let okAction = UIAlertAction(title: "OK", style: .default) { _ in
                     completion(true)
                 }
-
                 alert.addAction(okAction)
             } else if !showTryAgain {
                 completion(false)
             }
-            
             if showTryAgain {
                 let tryAgainAction = UIAlertAction(title: "Try Again", style: .default) { _ in
                     completion(true)
                 }
-
                 alert.addAction(tryAgainAction)
-                
                 let okAction = UIAlertAction(title: "OK", style: .cancel) { _ in
                     completion(false)
                 }
-
                 alert.addAction(okAction)
             }
-            
             mainWindow.rootViewController?.present(alert, animated: true, completion: nil)
         }
     }
 }
 
-func downloadFile(from urlString: String, to destinationURL: URL) {
+func downloadFile(from urlString: String, to destinationURL: URL,completion: @escaping (String) -> Void){
     let fileManager = FileManager.default
     let documentsDirectory = URL.documentsDirectory
-
-    
     guard let url = URL(string: urlString) else {
         print("Invalid URL: \(urlString)")
+        completion("[Internal Invalid URL error]")
         return
     }
-
     let task = URLSession.shared.downloadTask(with: url) { (tempLocalUrl, response, error) in
         guard let tempLocalUrl = tempLocalUrl, error == nil else {
             print("Error downloading file from \(urlString): \(String(describing: error))")
+            completion("Are you connected to the internet? [Download Failed]")
             return
         }
-        
         do {
-            // Move the downloaded file to the destination
             try fileManager.createDirectory(at: destinationURL.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
             try fileManager.moveItem(at: tempLocalUrl, to: destinationURL)
             print("Downloaded \(urlString) to \(destinationURL.path)")
+            
         } catch {
             print("Error saving file: \(error)")
+            
         }
     }
-    
     task.resume()
+    completion("")
 }

@@ -7,8 +7,10 @@
 
 import UIKit
 
+// Not AppStore
 class AppStoreIconFetcher {
     static private var iconCache: [String: UIImage] = [:]
+    static private let iconFetchDispatchQueue = DispatchQueue(label: "com.stik.StikJIT.iconFetchQueue", attributes: .concurrent)
     
     static func getIcon(for bundleID: String, completion: @escaping (UIImage?) -> Void) {
         // Check cache first
@@ -17,55 +19,15 @@ class AppStoreIconFetcher {
             return
         }
         
-        // Hit the App Store API
-        let baseURLString = "https://itunes.apple.com/lookup?bundleId="
-        let urlString = baseURLString + bundleID
-        
-        guard let url = URL(string: urlString) else {
-            DispatchQueue.main.async { completion(nil) }
-            return
-        }
-        
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else {
-                DispatchQueue.main.async { completion(nil) }
-                return
-            }
-            
+        iconFetchDispatchQueue.sync {
             do {
-                if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                   let results = json["results"] as? [[String: Any]],
-                   !results.isEmpty,
-                   let firstApp = results.first,
-                   let iconURLString = firstApp["artworkUrl512"] as? String ?? firstApp["artworkUrl100"] as? String,
-                   let iconURL = URL(string: iconURLString) {
-                    
-                    // Download the icon image
-                    downloadImage(from: iconURL) { image in
-                        if let image = image {
-                            // Cache the icon
-                            iconCache[bundleID] = image
-                        }
-                        DispatchQueue.main.async {
-                            completion(image)
-                        }
-                    }
-                } else {
-                    DispatchQueue.main.async { completion(nil) }
-                }
+                let ans = try JITEnableContext.shared.getAppIcon(withBundleId: bundleID)
+                iconCache[bundleID] = ans
+                completion(ans)
             } catch {
-                DispatchQueue.main.async { completion(nil) }
-            }
-        }.resume()
-    }
-    
-    private static func downloadImage(from url: URL, completion: @escaping (UIImage?) -> Void) {
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let data = data, let image = UIImage(data: data) {
-                completion(image)
-            } else {
+                print("Failed to get icon: \(error)")
                 completion(nil)
             }
-        }.resume()
+        }
     }
 } 

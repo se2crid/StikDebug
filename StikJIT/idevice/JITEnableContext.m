@@ -127,6 +127,23 @@ JITEnableContext* sharedJITContext = nil;
     }
 }
 
+- (UIImage*)getAppIconWithBundleId:(NSString*)bundleId error:(NSError**)error {
+    if(!provider) {
+        NSLog(@"Provider not initialized!");
+        *error = [self errorWithStr:@"Provider not initialized!" code:-1];
+        return nil;
+    }
+    
+    NSString* errorStr = nil;
+    UIImage* ans = getAppIcon(provider, bundleId, &errorStr);
+    if(errorStr){
+        *error = [self errorWithStr:errorStr code:-17];
+        return nil;
+    } else {
+        return ans;
+    }
+}
+
 - (void)dealloc {
     self->heartbeatSessionId = arc4random();
     if(provider) {
