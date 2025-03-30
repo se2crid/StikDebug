@@ -84,3 +84,30 @@ NSDictionary<NSString*, NSString*>* list_installed_apps(TcpProviderHandle* provi
 
     return ans;
 }
+
+
+UIImage* getAppIcon(TcpProviderHandle* provider, NSString* bundleID, NSString** error) {
+    IdeviceErrorCode err = IdeviceSuccess;
+
+    SpringBoardServicesClientHandle *client = NULL;
+    springboard_services_proxy_connect_tcp(provider, &client);
+    if (err != IdeviceSuccess) {
+        *error = @"Failed to connect to SpringBoard Services";
+        return nil;
+    }
+    
+    void *pngData = NULL;
+    size_t data_len = 0;
+    err = springboard_services_proxy_get_icon(client, [bundleID UTF8String], &pngData, &data_len);
+    if (err != IdeviceSuccess) {
+        springboard_services_proxy_free(client);
+        *error = @"Failed to get app icon";
+        return nil;
+    }
+    
+    NSData* pngNSData = [NSData dataWithBytes:pngData length:data_len];
+    free(pngData);
+    UIImage* ans = [UIImage imageWithData:pngNSData];
+    return ans;
+    
+}
