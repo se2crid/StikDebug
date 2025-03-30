@@ -23,6 +23,8 @@ struct SettingsView: View {
     
     @State private var mounted = false
     
+    @State private var showingConsoleLogsView = false
+    
     // Developer profile image URLs 
     private let developerProfiles: [String: String] = [
         "Blu": "https://github.com/0-Blu.png",
@@ -361,8 +363,32 @@ struct SettingsView: View {
                         .padding(.vertical, 20)
                         .padding(.horizontal, 16)
                     }
+                    .padding(.bottom, 16)
                     
-                    // Version text - now outside of any card, as standalone text at the bottom
+                    // Move System Logs section here (right after About card, before version)
+                    SettingsCard {
+                        Button(action: {
+                            showingConsoleLogsView = true
+                        }) {
+                            HStack {
+                                Text("System Logs")
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .padding(.vertical, 16)
+                            .padding(.horizontal, 16)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                    .padding(.bottom, 16)
+                    
+                    // Version info should now come after System Logs
                     HStack {
                         Spacer()
                         Text("Version 1.0 • iOS \(UIDevice.current.systemVersion)")
@@ -375,6 +401,11 @@ struct SettingsView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 20)
+            }
+            
+            // Add this sheet at the end of the ZStack, before the final closing bracket
+            .sheet(isPresented: $showingConsoleLogsView) {
+                ConsoleLogsView()
             }
         }
         .fileImporter(
@@ -653,5 +684,12 @@ struct CollaboratorRow: View {
             }
             .padding(.vertical, 8)
         }
+    }
+}
+
+// Define these in a separate file if they conflict
+struct ConsoleLogsView_Preview: PreviewProvider {
+    static var previews: some View {
+        ConsoleLogsView()
     }
 }
