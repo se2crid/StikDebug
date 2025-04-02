@@ -8,7 +8,7 @@
 import SwiftUI
 import UIKit
 
-struct ConsoleLogsView: View {
+struct ConsoleView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var logManager = LogManager.shared
     @State private var autoScroll = true
@@ -35,7 +35,7 @@ struct ConsoleLogsView: View {
                                 ForEach(["Version: \(UIDevice.current.systemVersion)",
                                          "Name: \(UIDevice.current.name)",
                                          "Model: \(UIDevice.current.model)",
-                                         "StikJIT Version: App Version: 1.0"], id: \.self) { info in
+                                         "StikDebug Version: App Version: 1.0"], id: \.self) { info in
                                     Text("[\(timeString())] ℹ️ \(info)")
                                         .font(.system(size: 11, design: .monospaced))
                                         .foregroundColor(.white)
@@ -95,7 +95,7 @@ struct ConsoleLogsView: View {
                                 logsContent += "Version: \(UIDevice.current.systemVersion)\n"
                                 logsContent += "Name: \(UIDevice.current.name)\n" 
                                 logsContent += "Model: \(UIDevice.current.model)\n"
-                                logsContent += "StikJIT Version: App Version: 1.0\n\n"
+                                logsContent += "StikDebug Version: App Version: 1.0\n\n"
                                 logsContent += "=== LOG ENTRIES ===\n"
                                 
                                 // Add all log entries with proper formatting
@@ -108,7 +108,7 @@ struct ConsoleLogsView: View {
                                 let dateFormatter = DateFormatter()
                                 dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
                                 let timestamp = dateFormatter.string(from: Date())
-                                let fileURL = documentsDirectory.appendingPathComponent("StikJIT_Logs_\(timestamp).txt")
+                                let fileURL = documentsDirectory.appendingPathComponent("StikDebug_Logs_\(timestamp).txt")
                                 
                                 do {
                                     // Write the logs to the file
@@ -116,7 +116,7 @@ struct ConsoleLogsView: View {
                                     
                                     // Set alert variables and show the alert
                                     alertTitle = "Logs Exported"
-                                    alertMessage = "Logs have been saved to Files app in StikJIT folder."
+                                    alertMessage = "Logs have been saved to Files app in StikDebug folder."
                                     isError = false
                                     showingCustomAlert = true
                                 } catch {
@@ -150,7 +150,7 @@ struct ConsoleLogsView: View {
                                 logsContent += "Version: \(UIDevice.current.systemVersion)\n"
                                 logsContent += "Name: \(UIDevice.current.name)\n" 
                                 logsContent += "Model: \(UIDevice.current.model)\n"
-                                logsContent += "StikJIT Version: App Version: 1.0\n\n"
+                                logsContent += "StikDebug Version: App Version: 1.0\n\n"
                                 logsContent += "=== LOG ENTRIES ===\n"
                                 
                                 // Add all log entries with proper formatting
@@ -189,7 +189,7 @@ struct ConsoleLogsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("Console Logs")
+                    Text("Console")
                         .font(.headline)
                         .foregroundColor(.white)
                 }
@@ -199,9 +199,7 @@ struct ConsoleLogsView: View {
                         dismiss()
                     }) {
                         HStack(spacing: 2) {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .semibold))
-                            Text("Settings")
+                            Text("Exit")
                                 .fontWeight(.regular)
                         }
                         .foregroundColor(.blue)
@@ -301,8 +299,8 @@ struct ConsoleLogsView: View {
 }
 
 
-struct ConsoleLogsView_Previews: PreviewProvider {
+struct ConsoleView_Previews: PreviewProvider {
     static var previews: some View {
-        ConsoleLogsView()
+        ConsoleView()
     }
 } 

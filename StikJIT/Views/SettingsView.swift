@@ -10,7 +10,6 @@ struct SettingsView: View {
     @AppStorage("username") private var username = "User"
     @AppStorage("customBackgroundColor") private var customBackgroundColorHex: String = Color.primaryBackground.toHex() ?? "#000000"
     @AppStorage("selectedAppIcon") private var selectedAppIcon: String = "AppIcon"
-    @AppStorage("autoQuitAfterEnablingJIT") private var doAutoQuitAfterEnablingJIT = false
     @State private var isShowingPairingFilePicker = false
 
     @State private var selectedBackgroundColor: Color = Color.primaryBackground
@@ -22,14 +21,15 @@ struct SettingsView: View {
     @State private var is_lc = false
     
     @StateObject private var mountProg = MountingProgress.shared
-    
+    @StateObject private var tunnelManager = TunnelManager.shared
+
     @State private var mounted = false
     
     @State private var showingConsoleLogsView = false
     
     @State private var remoteVersion: String = "-"
     
-    // Developer profile image URLs 
+    // Developer profile image URLs
     private let developerProfiles: [String: String] = [
         "Stephen": "https://github.com/0-Blu.png",
         "jkcoxson": "https://github.com/jkcoxson.png",
@@ -47,9 +47,8 @@ struct SettingsView: View {
 
             ScrollView {
                 VStack(spacing: 12) {
-                    // App Logo and Username Section 
+                    // App Logo and Username Section
                     VStack(spacing: 16) {
-                        // bruh why how did i forget to add this lol
                         VStack {
                             Image("StikJIT")
                                 .resizable()
@@ -63,7 +62,7 @@ struct SettingsView: View {
                         }
                         .padding(.top, 16)
                         
-                        Text("StikJIT")
+                        Text("StikDebug")
                             .font(.title2)
                             .fontWeight(.semibold)
                             .foregroundColor(.primary)
@@ -106,16 +105,33 @@ struct SettingsView: View {
                         .padding(.horizontal, 16)
                     }
                     
+                    // VPN Control section with Stop VPN button
                     SettingsCard {
                         VStack(alignment: .leading, spacing: 20) {
-                            Text("Behavior")
+                            Text("VPN")
                                 .font(.headline)
                                 .foregroundColor(.primary)
                                 .padding(.bottom, 4)
                             
-                            Toggle("Automatically Quit After Enabling JIT", isOn: $doAutoQuitAfterEnablingJIT)
-                                .foregroundColor(.primary)
-                                .padding(.vertical, 6)
+                            Button(action: {
+                                if tunnelManager.tunnelStatus == .connected {
+                                    tunnelManager.stopVPN()
+                                } else if tunnelManager.tunnelStatus == .disconnected {
+                                    tunnelManager.startVPN()
+                                }
+                                // Optionally, you can handle other statuses here as needed.
+                            }) {
+                                HStack {
+                                    Spacer()
+                                    Text(tunnelManager.tunnelStatus == .connected ? "Stop VPN" : "Start VPN")
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.white)
+                                    Spacer()
+                                }
+                                .padding(.vertical, 14)
+                                .background(tunnelManager.tunnelStatus == .connected ? Color.red : Color.blue)
+                                .cornerRadius(12)
+                            }
                         }
                         .padding(.vertical, 20)
                         .padding(.horizontal, 16)
@@ -268,8 +284,6 @@ struct SettingsView: View {
                             self.mounted = isMounted()
                         }
                     }
-
-                    
                     
                     // About section
                     SettingsCard {
@@ -279,7 +293,7 @@ struct SettingsView: View {
                                 .foregroundColor(.primary)
                                 .padding(.bottom, 4)
                             
-                            // Main Developers 
+                            // Main Developers
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Creators")
                                     .font(.subheadline)
@@ -346,13 +360,9 @@ struct SettingsView: View {
                                 // Vertical stack of collaborators
                                 VStack(spacing: 12) {
                                     CollaboratorRow(name: "Stossy11", url: "https://github.com/Stossy11", imageUrl: developerProfiles["Stossy11"] ?? "")
-                                    
                                     CollaboratorRow(name: "Neo", url: "https://neoarz.xyz/", imageUrl: developerProfiles["Neo"] ?? "")
-                                    
                                     CollaboratorRow(name: "Se2crid", url: "https://github.com/Se2crid", imageUrl: developerProfiles["Se2crid"] ?? "")
-                                    
                                     CollaboratorRow(name: "Huge_Black", url: "https://github.com/HugeBlack", imageUrl: developerProfiles["Huge_Black"] ?? "")
-                                    
                                     CollaboratorRow(name: "Wynwxst", url: "https://github.com/Wynwxst", imageUrl: developerProfiles["Wynwxst"] ?? "")
                                 }
                             }
@@ -371,17 +381,10 @@ struct SettingsView: View {
                                 .padding(.bottom, 4)
                             
                             VStack(spacing: 6) {
-                                // Existing Links
                                 LinkRow(icon: "link", title: "Source Code", url: "https://github.com/0-Blu/StikJIT")
                                 LinkRow(icon: "xmark.shield", title: "Report an Issue", url: "https://github.com/0-Blu/StikJIT/issues")
-                                
-                                // New Discord Link
                                 LinkRow(icon: "bubble.left", title: "Join Discord", url: "https://discord.gg/ZnNcrRT3M8")
-                                
-                                //shortcut link
                                 LinkRow(icon: "sparkles", title: "iOS Shortcut", url: "https://www.icloud.com/shortcuts/f0c11c0a76654e63b18d8c59d82e152e")
-                                
-                                // StikNES promotion
                                 Button(action: {
                                     if let url = URL(string: "https://apps.apple.com/us/app/stiknes/id6737158545") {
                                         UIApplication.shared.open(url)
@@ -431,13 +434,12 @@ struct SettingsView: View {
                     }
                     .padding(.bottom, 4)
                     .sheet(isPresented: $showingConsoleLogsView) {
-                        ConsoleLogsView()
+                        ConsoleView()
                     }
                     
-                    // Version info should now come after System Logs
+                    // Version info section
                     HStack {
                         Spacer()
-                        
                         if remoteVersion == "-" {
                             Text("Checking version...")
                                 .font(.footnote)
@@ -450,7 +452,6 @@ struct SettingsView: View {
                                 .font(.footnote)
                                 .foregroundColor(.secondary.opacity(0.8))
                         }
-                        
                         Spacer()
                     }
                     .padding(.top, 8)
@@ -467,29 +468,21 @@ struct SettingsView: View {
         ) { result in
             switch result {
             case .success(let urls):
-                // Get the first URL from the array
                 guard let url = urls.first else { return }
-                
                 let fileManager = FileManager.default
                 let accessing = url.startAccessingSecurityScopedResource()
-                
                 if fileManager.fileExists(atPath: url.path) {
                     do {
                         if fileManager.fileExists(atPath: URL.documentsDirectory.appendingPathComponent("pairingFile.plist").path) {
                             try fileManager.removeItem(at: URL.documentsDirectory.appendingPathComponent("pairingFile.plist"))
                         }
-                        
                         try fileManager.copyItem(at: url, to: URL.documentsDirectory.appendingPathComponent("pairingFile.plist"))
                         print("File copied successfully!")
-                        
-                        // Show progress bar and initialize progress
                         DispatchQueue.main.async {
                             isImportingFile = true
                             importProgress = 0.0
                             pairingFileIsValid = false
                         }
-                        
-                        // Create timer to update progress 
                         let progressTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { timer in
                             DispatchQueue.main.async {
                                 if importProgress < 1.0 {
@@ -498,13 +491,9 @@ struct SettingsView: View {
                                     timer.invalidate()
                                     isImportingFile = false
                                     pairingFileIsValid = true
-                                    
-                                    // Show success message
                                     withAnimation {
                                         showPairingFileMessage = true
                                     }
-                                    
-                                    // Hide message after delay
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                         withAnimation {
                                             showPairingFileMessage = false
@@ -513,23 +502,15 @@ struct SettingsView: View {
                                 }
                             }
                         }
-                        
-                        // Ensure timer keeps running
                         RunLoop.current.add(progressTimer, forMode: .common)
-                        
-                        // Start heartbeat in background
                         startHeartbeatInBackground()
-                        
                     } catch {
                         print("Error copying file: \(error)")
                     }
                 } else {
                     print("Source file does not exist.")
                 }
-                
-                if accessing {
-                    url.stopAccessingSecurityScopedResource()
-                }
+                if accessing { url.stopAccessingSecurityScopedResource() }
             case .failure(let error):
                 print("Failed to import file: \(error)")
             }
@@ -579,15 +560,12 @@ struct SettingsView: View {
 
     private func fetchVersionFromGitHub() {
         let versionURL = "https://raw.githubusercontent.com/0-Blu/StikJIT/refs/heads/main/version.txt"
-        
         guard let url = URL(string: versionURL) else { return }
-        
         URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data, error == nil else {
                 print("Failed to fetch version: \(error?.localizedDescription ?? "Unknown error")")
                 return
             }
-            
             if let versionString = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) {
                 DispatchQueue.main.async {
                     self.remoteVersion = versionString
@@ -600,11 +578,9 @@ struct SettingsView: View {
 // Helper components
 struct SettingsCard<Content: View>: View {
     let content: Content
-    
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
-    
     var body: some View {
         content
             .background(Color(UIColor.secondarySystemBackground))
@@ -616,7 +592,6 @@ struct SettingsCard<Content: View>: View {
 struct InfoRow: View {
     var title: String
     var value: String
-    
     var body: some View {
         HStack {
             Text(title)
@@ -634,7 +609,6 @@ struct LinkRow: View {
     var icon: String
     var title: String
     var url: String
-    
     var body: some View {
         Button(action: {
             if let url = URL(string: url) {
@@ -654,12 +628,10 @@ struct LinkRow: View {
     }
 }
 
-// Component for 2x2 grid layout of collaborators
 struct CollaboratorGridItem: View {
     var name: String
     var url: String
     var imageUrl: String
-    
     var body: some View {
         Button(action: {
             if let url = URL(string: url) {
@@ -669,7 +641,6 @@ struct CollaboratorGridItem: View {
             VStack(spacing: 8) {
                 ProfileImage(url: imageUrl)
                     .frame(width: 50, height: 50)
-                
                 Text(name)
                     .foregroundColor(.primary)
                     .fontWeight(.medium)
@@ -687,7 +658,6 @@ struct CollaboratorGridItem: View {
 struct ProfileImage: View {
     var url: String
     @State private var image: UIImage?
-    
     var body: some View {
         Group {
             if let image = image {
@@ -713,10 +683,8 @@ struct ProfileImage: View {
             }
         }
     }
-    
     private func loadImage() {
         guard let imageUrl = URL(string: url) else { return }
-        
         URLSession.shared.dataTask(with: imageUrl) { data, response, error in
             if let data = data, let downloadedImage = UIImage(data: data) {
                 DispatchQueue.main.async {
@@ -727,12 +695,10 @@ struct ProfileImage: View {
     }
 }
 
-// Component for vertical collaborator list - Removed background for cleaner look
 struct CollaboratorRow: View {
     var name: String
     var url: String
     var imageUrl: String
-    
     var body: some View {
         Button(action: {
             if let url = URL(string: url) {
@@ -742,25 +708,15 @@ struct CollaboratorRow: View {
             HStack(spacing: 12) {
                 ProfileImage(url: imageUrl)
                     .frame(width: 40, height: 40)
-                
                 Text(name)
                     .foregroundColor(.primary)
                     .fontWeight(.medium)
-                
                 Spacer()
-                
                 Image(systemName: "link")
                     .font(.system(size: 16))
                     .foregroundColor(.blue)
             }
             .padding(.vertical, 8)
         }
-    }
-}
-
-// Define these in a separate file if they conflict
-struct ConsoleLogsView_Preview: PreviewProvider {
-    static var previews: some View {
-        ConsoleLogsView()
     }
 }
