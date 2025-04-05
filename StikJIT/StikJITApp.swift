@@ -323,27 +323,9 @@ struct HeartbeatApp: App {
     ]
     
     init() {
-        newVerCheck()
         let fixMethod = class_getInstanceMethod(UIDocumentPickerViewController.self, #selector(UIDocumentPickerViewController.fix_init(forOpeningContentTypes:asCopy:)))!
         let origMethod = class_getInstanceMethod(UIDocumentPickerViewController.self, #selector(UIDocumentPickerViewController.init(forOpeningContentTypes:asCopy:)))!
         method_exchangeImplementations(origMethod, fixMethod)
-    }
-    
-    func newVerCheck() {
-        let currentDate = Calendar.current.startOfDay(for: Date())
-        let VUA = UserDefaults.standard.object(forKey: "VersionUpdateAlert") as? Date ?? Date.distantPast
-        if currentDate > Calendar.current.startOfDay(for: VUA) {
-            if UpdateRetrieval() {
-                alert_title = "Update Available!"
-                let urlString = "https://raw.githubusercontent.com/0-Blu/StikJIT/refs/heads/main/version.txt"
-                httpGet(urlString) { result in
-                    if result == nil { return }
-                    alert_string = "Update to: version \(result!)!"
-                    show_alert = true
-                }
-            }
-            UserDefaults.standard.set(currentDate, forKey: "VersionUpdateAlert")
-        }
     }
     
     // MARK: - VPN Startup Sequence
@@ -427,7 +409,6 @@ struct HeartbeatApp: App {
                         }
                 } else {
                     MainTabView()
-                        .preferredColorScheme(.dark)
                         .onAppear {
                             let fileManager = FileManager.default
                             for (index, urlString) in urls.enumerated() {
@@ -453,7 +434,6 @@ struct HeartbeatApp: App {
                                         showButton: true,
                                         primaryButtonText: "OK"
                                     )
-                                    .preferredColorScheme(.dark)
                                 }
                             }
                         )

@@ -47,16 +47,6 @@ struct ConsoleView: View {
                             dismiss()
                         }
                         .foregroundColor(.blue)
-                        
-                        Button(action: { dismiss() }) {
-                            HStack(spacing: 2) {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 16, weight: .semibold))
-                                Text("Settings")
-                                    .fontWeight(.regular)
-                            }
-                        }
-                        .foregroundColor(.blue)
                     }
                 }
                 // Trailing toolbar: Clear logs button
@@ -103,7 +93,7 @@ struct ConsoleView: View {
             "Version: \(UIDevice.current.systemVersion)",
             "Name: \(UIDevice.current.name)",
             "Model: \(UIDevice.current.model)",
-            "StikDebug Version: App Version: 1.0"
+            "StikDebug Version: App Version: 1.2"
         ], id: \.self) { info in
             Text("[\(timeString())] ℹ️ \(info)")
                 .font(.system(size: 11, design: .monospaced))
