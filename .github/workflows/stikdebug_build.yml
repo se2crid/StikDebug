@@ -1,10 +1,10 @@
-name: Build Unsigned IPA debug
+name: Build Unsigned IPA stikdebug
 
 on:
   push:
-    branches: [ "Debug" ]
+    branches: [ "debug" ]
   pull_request:
-    branches: [ "Debug" ]
+    branches: [ "debug" ]
   workflow_dispatch:
 
 jobs:
