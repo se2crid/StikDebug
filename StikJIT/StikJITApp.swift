@@ -288,38 +288,6 @@ func httpGet(_ urlString: String, result: @escaping (String?) -> Void) {
     }
 }
 
-func UpdateRetrieval() -> Bool {
-    let fileURL = URL.documentsDirectory.appendingPathComponent("version.txt")
-    if !fileManager.fileExists(atPath: fileURL.path) {
-        let urlString = "https://raw.githubusercontent.com/0-Blu/StikJIT/refs/heads/main/version.txt"
-        var fileContent: String = ""
-        httpGet(urlString) { result in
-            if let fc = result {
-                fileContent = fc
-            }
-        }
-        if fileContent == "" {
-            do {
-                try fileContent.write(to: fileURL, atomically: true, encoding: .utf8)
-                print("Wrote to file successfully")
-            } catch {
-                print("Error writing to file: \(error)")
-            }
-        } else {
-            print("Failed to get version.txt, will try again later.")
-        }
-    }
-    let ver = try! String(contentsOfFile: fileURL.path)
-    let urlString = "https://raw.githubusercontent.com/0-Blu/StikJIT/refs/heads/main/version.txt"
-    var res = false
-    httpGet(urlString) { result in
-        if let fc = result, ver != fc {
-            res = true
-        }
-    }
-    return res
-}
-
 @main
 struct HeartbeatApp: App {
     @State private var isLoading = true
@@ -355,27 +323,9 @@ struct HeartbeatApp: App {
     ]
     
     init() {
-        newVerCheck()
         let fixMethod = class_getInstanceMethod(UIDocumentPickerViewController.self, #selector(UIDocumentPickerViewController.fix_init(forOpeningContentTypes:asCopy:)))!
         let origMethod = class_getInstanceMethod(UIDocumentPickerViewController.self, #selector(UIDocumentPickerViewController.init(forOpeningContentTypes:asCopy:)))!
         method_exchangeImplementations(origMethod, fixMethod)
-    }
-    
-    func newVerCheck() {
-        let currentDate = Calendar.current.startOfDay(for: Date())
-        let VUA = UserDefaults.standard.object(forKey: "VersionUpdateAlert") as? Date ?? Date.distantPast
-        if currentDate > Calendar.current.startOfDay(for: VUA) {
-            if UpdateRetrieval() {
-                alert_title = "Update Available!"
-                let urlString = "https://raw.githubusercontent.com/0-Blu/StikJIT/refs/heads/main/version.txt"
-                httpGet(urlString) { result in
-                    if result == nil { return }
-                    alert_string = "Update to: version \(result!)!"
-                    show_alert = true
-                }
-            }
-            UserDefaults.standard.set(currentDate, forKey: "VersionUpdateAlert")
-        }
     }
     
     // MARK: - VPN Startup Sequence
@@ -459,7 +409,6 @@ struct HeartbeatApp: App {
                         }
                 } else {
                     MainTabView()
-                        .preferredColorScheme(.dark)
                         .onAppear {
                             let fileManager = FileManager.default
                             for (index, urlString) in urls.enumerated() {
@@ -485,7 +434,6 @@ struct HeartbeatApp: App {
                                         showButton: true,
                                         primaryButtonText: "OK"
                                     )
-                                    .preferredColorScheme(.dark)
                                 }
                             }
                         )
@@ -662,32 +610,50 @@ func startHeartbeatInBackground() {
 
 struct LoadingView: View {
     @State private var animate = false
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [Color.black, Color.black]),
-                           startPoint: .topLeading, endPoint: .bottomTrailing)
+            // Use system background color instead of fixed black
+            Color(colorScheme == .dark ? .black : .white)
                 .ignoresSafeArea()
             VStack {
                 ZStack {
+                    // Background circle - slightly visible in both themes
                     Circle()
                         .stroke(lineWidth: 8)
-                        .foregroundColor(Color.white.opacity(0.3))
+                        .foregroundColor(colorScheme == .dark ? 
+                            Color.white.opacity(0.3) : 
+                            Color.black.opacity(0.1))
                         .frame(width: 80, height: 80)
                     Circle()
                         .trim(from: 0, to: 0.7)
                         .stroke(AngularGradient(
-                            gradient: Gradient(colors: [Color.white.opacity(0.8), Color.white.opacity(0.3)]),
+                            gradient: Gradient(colors: [
+                                colorScheme == .dark ? Color.white.opacity(0.8) : Color.blue.opacity(0.8),
+                                colorScheme == .dark ? Color.white.opacity(0.3) : Color.blue.opacity(0.3)
+                            ]),
                             center: .center
                         ), style: StrokeStyle(lineWidth: 6, lineCap: .round))
                         .rotationEffect(.degrees(animate ? 360 : 0))
                         .frame(width: 80, height: 80)
                         .animation(Animation.linear(duration: 1.2).repeatForever(autoreverses: false), value: animate)
                 }
-                .shadow(color: .white.opacity(0.5), radius: 10, x: 0, y: 0)
-                .onAppear { animate = true }
+                // Shadow adapts to theme
+                .shadow(color: colorScheme == .dark ? 
+                    .white.opacity(0.5) : 
+                    .blue.opacity(0.3), 
+                    radius: 10, x: 0, y: 0)
+                .onAppear {
+                    animate = true
+                }
+                
+                // Text adapts to theme
                 Text("Loading...")
                     .font(.system(size: 20, weight: .medium, design: .rounded))
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundColor(colorScheme == .dark ? 
+                        .white.opacity(0.8) : 
+                        .black.opacity(0.8))
                     .padding(.top, 20)
                     .opacity(animate ? 1.0 : 0.5)
                     .animation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: animate)
