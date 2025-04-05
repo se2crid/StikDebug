@@ -11,7 +11,10 @@ import NetworkExtension
 import Network
 import UniformTypeIdentifiers
 
+// MARK: - Welcome Sheet View
+
 struct WelcomeSheetView: View {
+    // A callback to dismiss the sheet
     var onDismiss: (() -> Void)?
 
     var body: some View {
@@ -258,6 +261,8 @@ class TunnelManager: ObservableObject {
     }
 }
 
+// MARK: - Rest of the App Code
+
 let fileManager = FileManager.default
 
 func httpGet(_ urlString: String, result: @escaping (String?) -> Void) {
@@ -373,8 +378,48 @@ struct HeartbeatApp: App {
         }
     }
     
+    // MARK: - VPN Startup Sequence
+    //
+    // This function encapsulates the startup steps (starting the VPN, proxy,
+    // and subsequent checks). It is called either automatically on non–first launch
+    // or after the welcome sheet is dismissed.
     func startVPNSequence() {
         TunnelManager.shared.startVPN()
+        
+        startProxy() { result, error in
+            if result {
+                checkVPNConnection() { result, vpn_error in
+                    if result {
+                        if FileManager.default.fileExists(atPath: URL.documentsDirectory.appendingPathComponent("pairingFile.plist").path) {
+                            Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
+                                if pubHeartBeat {
+                                    isLoading = false
+                                    timer.invalidate()
+                                } else {
+                                    if let error = error {
+                                        if error == InvalidHostID.rawValue {
+                                            isPairing = true
+                                        } else {
+                                            startHeartbeatInBackground()
+                                        }
+                                        self.error = nil
+                                    }
+                                }
+                            }
+                            startHeartbeatInBackground()
+                        } else {
+                            isLoading = false
+                        }
+                    } else if let vpn_error = vpn_error {
+                        showAlert(title: "Error", message: "EM Proxy failed to connect: \(vpn_error)", showOk: true) { _ in
+                            exit(0)
+                        }
+                    }
+                }
+            } else if let error = error {
+                showAlert(title: "Error", message: "EM Proxy Failed to start \(error)", showOk: true) { _ in }
+            }
+        }
     }
     
     var body: some Scene {
@@ -456,7 +501,24 @@ struct HeartbeatApp: App {
             }
         }
     }
-        
+    
+    func startProxy(callback: @escaping (Bool, Int?) -> Void) {
+        let port = 51820
+        let bindAddr = "127.0.0.1:\(port)"
+        DispatchQueue.global(qos: .background).async {
+            let result = start_emotional_damage(bindAddr)
+            DispatchQueue.main.async {
+                if result == 0 {
+                    print("DEBUG: em_proxy started successfully on port \(port)")
+                    callback(true, nil)
+                } else {
+                    print("DEBUG: Failed to start em_proxy")
+                    callback(false, Int(result))
+                }
+            }
+        }
+    }
+    
     private func checkVPNConnection(callback: @escaping (Bool, String?) -> Void) {
         let host = NWEndpoint.Host("10.7.0.1")
         let port = NWEndpoint.Port(rawValue: 62078)!
