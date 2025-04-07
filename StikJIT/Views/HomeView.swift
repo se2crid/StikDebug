@@ -338,12 +338,7 @@ class InstalledAppsViewModel: ObservableObject {
             print(error)
             self.apps = [:]
         }
-        
-        if self.apps.count == 0 && !checkAppEntitlement("get-task-allow") && !UserDefaults.standard.bool(forKey: "skipGetTaskAllowCheck") {
-            showAlert(title: "Warning", message: "StikJIT is not signed with **get-task-allow**. It's OK, but if you also sign the app you want to enable JIT for with the same method, it\n\n ***WILL NOT WORK***.\n\nPlease sign the app you want to enable JIT for using a development certificate. You can disable this alert in settings.", showOk: true) { _ in
-                
-            }
-        }
+
     }
 }
 

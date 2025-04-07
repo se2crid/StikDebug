@@ -68,7 +68,7 @@ struct CustomErrorView: View {
                     .padding(.horizontal, 12)
                 
                 // Message 
-                Text(LocalizedStringKey(message))
+                Text(message)
                     .font(.system(size: 15, design: .rounded))
                     .foregroundColor(colorScheme == .dark ? .white.opacity(0.9) : .black.opacity(0.9))
                     .multilineTextAlignment(.center)

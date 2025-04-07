@@ -669,10 +669,7 @@ public func showAlert(title: String, message: String, showOk: Bool, showTryAgain
             let customErrorView = CustomErrorView(
                 title: title,
                 message: message,
-                onDismiss: {
-                    rootViewController?.presentedViewController?.dismiss(animated: true)
-                    completion(false)
-                },
+                onDismiss: { completion(false) },
                 showButton: true,
                 primaryButtonText: "Try Again",
                 onPrimaryButtonTap: { completion(true) }
@@ -686,16 +683,10 @@ public func showAlert(title: String, message: String, showOk: Bool, showTryAgain
             let customErrorView = CustomErrorView(
                 title: title,
                 message: message,
-                onDismiss: {
-                    rootViewController?.presentedViewController?.dismiss(animated: true)
-                    completion(true)
-                },
+                onDismiss: { completion(true) },
                 showButton: true,
                 primaryButtonText: "OK",
-                onPrimaryButtonTap: {
-                    rootViewController?.presentedViewController?.dismiss(animated: true)
-                    completion(true)
-                }
+                onPrimaryButtonTap: { completion(true) }
             )
             let hostingController = UIHostingController(rootView: customErrorView)
             hostingController.modalPresentationStyle = .overFullScreen
@@ -706,10 +697,7 @@ public func showAlert(title: String, message: String, showOk: Bool, showTryAgain
             let customErrorView = CustomErrorView(
                 title: title,
                 message: message,
-                onDismiss: {
-                    rootViewController?.presentedViewController?.dismiss(animated: true)
-                    completion(false)
-                },
+                onDismiss: { completion(false) },
                 showButton: false
             )
             let hostingController = UIHostingController(rootView: customErrorView)

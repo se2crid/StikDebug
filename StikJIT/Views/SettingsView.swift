@@ -10,8 +10,6 @@ struct SettingsView: View {
     @AppStorage("username") private var username = "User"
     @AppStorage("customBackgroundColor") private var customBackgroundColorHex: String = ""
     @AppStorage("selectedAppIcon") private var selectedAppIcon: String = "AppIcon"
-    @AppStorage("autoQuitAfterEnablingJIT") private var doAutoQuitAfterEnablingJIT = false
-    @AppStorage("skipGetTaskAllowCheck") private var doSkipGetTaskAllowCheck = false
     @State private var isShowingPairingFilePicker = false
     @Environment(\.colorScheme) private var colorScheme
 
@@ -188,6 +186,7 @@ struct SettingsView: View {
                                 } else if tunnelManager.tunnelStatus == .disconnected {
                                     tunnelManager.startVPN()
                                 }
+                                // Optionally, you can handle other statuses here as needed.
                             }) {
                                 HStack {
                                     Spacer()
@@ -200,13 +199,6 @@ struct SettingsView: View {
                                 .background(tunnelManager.tunnelStatus == .connected ? Color.red : Color.blue)
                                 .cornerRadius(12)
                             }
-                            
-                            Toggle("Automatically Quit After Enabling JIT", isOn: $doAutoQuitAfterEnablingJIT)
-                                .foregroundColor(.primary)
-                                .padding(.vertical, 6)
-                            Toggle("Skip get-task-allow Check", isOn: $doSkipGetTaskAllowCheck)
-                                .foregroundColor(.primary)
-                                .padding(.vertical, 6)
                         }
                         .padding(.vertical, 20)
                         .padding(.horizontal, 16)
