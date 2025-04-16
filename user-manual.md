@@ -8,22 +8,22 @@ Downloads for Jitterbug Pair can be found [here.](https://github.com/osy/Jitterb
 ### For Windows
 
 1. **Extract** `Jitterbugpair-win64.zip`.
-2. **Set a passcode** for your device if you haven't already. Ensure the device is connected via cable and unlocked.
+2. **Set a passcode** for your device if you haven't already. Unlock your device, connect it to your computer via cable. If a prompt appears: tap "Trust."
 3. Open your device to the homescreen.
 4. In File Explorer, locate `jitterbugpair.exe` and run it by double-clicking or right-clicking and selecting "Open".
 5. JitterbugPair will generate a **pairing file** in the same folder. This file will have the extension `.mobiledevicepairing`.
-6. **Transfer the pairing file** to your iOS device using Google Drive, email, or any other method.
+6. **Transfer the pairing file** to your iOS device using One/iCloud/Google Drive, email, or any other method. For best results, compress the file into a .zip folder first.
 
 ---
 
 ### For macOS
 
 1. **Extract** `Jitterbugpair-macos.zip`.
-2. **Set a passcode** for your device if you haven't already. Ensure the device is connected via cable and unlocked.
+2. **Set a passcode** for your device if you haven't already. Unlock your device, connect it to your computer via cable. If a prompt appears: tap "Trust."
 3. Open your device to the homescreen.
 4. Execute `JitterBugPair` by double-clicking or right-clicking and selecting "Open".
 5. JitterBugPair will generate a **pairing file** with the extension `.mobiledevicepairing`.
-6. **Transfer the pairing file** to your iOS device using Google Drive, email, or any other method.
+6. **Transfer the pairing file** to your iOS device using AirDrop, iCloud/One/Google Drive, email, or any other method. For best results, compress the file into a .zip folder first.
 
 ---
 
@@ -39,8 +39,8 @@ Downloads for Jitterbug Pair can be found [here.](https://github.com/osy/Jitterb
 
 ### Notes
 
-- If you **update your iDevice**, the pairing file will become **invalid**, and you’ll need to repeat the pairing process.
-- To prompt SideStore to ask for the pairing file again, go to **SideStore > Settings** and tap **Reset Pairing File**.
+- If you **update or reset your iDevice**, the pairing file will become **invalid**, and you’ll need to repeat the pairing process.
+- To prompt StikJIT to ask for the pairing file again, go to **StikJIT > Settings** and tap **Import New Pairing File**.
 
 # How to Install StikJIT
 
