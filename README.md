@@ -42,7 +42,10 @@
 - Native UI for managing JIT-enabling.  
 - No data collection—ensuring full privacy. 
 
-## Building Instructions  
+## Installation Guide
+For detailed installation instructions, including setup with SideStore, AltStore, or without any store, please refer to our [User Manual](user-manual.md).
+
+## Building  
 
 1. **Clone the repository:**  
    ```sh
