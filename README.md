@@ -42,7 +42,10 @@
 - Native UI for managing JIT-enabling.  
 - No data collection—ensuring full privacy. 
 
-## Building Instructions  
+## Installation Guide
+For detailed installation instructions, including setup with SideStore, AltStore, or without any store, please refer to our [User Manual](user-manual.md).
+
+## Building  
 
 1. **Clone the repository:**  
    ```sh
@@ -67,19 +70,36 @@
 
 
 ## Contributing 
-```sh
-# Clone the repository
-git clone https://github.com/0-Blu/StikJIT.git
-cd StikJIT
 
-# Open in Xcode
-open StikJIT.xcodeproj
-```
 
-Then in Xcode:
-- Connect your iOS device
-- Select your device in Xcode
-- Build and run the project (⌘R)
+1. **Set up your development environment:**
+   ```sh
+   # Clone the repository
+   git clone https://github.com/0-Blu/StikJIT.git
+   cd StikJIT
+
+   # Open in Xcode
+   open StikJIT.xcodeproj
+   ```
+
+2. **Make your changes:**
+   - Connect your iOS device
+   - Select your device in Xcode
+   - Build and run the project (⌘R)
+   - Make and test your changes thoroughly
+
+3. **Submit your contribution:**
+   - Fork the repository
+   - Create a new branch for your feature/fix
+   - Commit your changes with clear commit messages
+   - Push to your fork
+   - Open a pull request with a detailed description of your changes
+  
+> [!TIP]
+> Before submitting a pull request, ensure you've:
+> - Tested your changes on a real device
+> - Followed the existing code style
+> - Added comments explaning what your pull request is meant to do
 
 ## License  
 StikJIT is licensed under **AGPL-3.0**. See [`LICENSE`](LICENSE) for details.  
