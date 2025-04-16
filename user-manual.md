@@ -78,7 +78,7 @@ If you prefer not to use SideStore, alternative methods such as Sideloadly or Al
    Obtain the IPA from [StikJIT](https://github.com/0-Blu/StikJIT/releases/latest).
 
 2. **Download StosVPN via TestFlight:**  
-   Get the latest version of [StosVPN]() from the AppStore.
+   Get the latest version of [StosVPN](https://apps.apple.com/us/app/stosvpn/id6744003051) from the AppStore.
 
 3. **Create a Pairing File:**  
    Follow the instructions in the Pairing Guide section to generate a pairing file. Afterward, compress (zip) the pairing file.
