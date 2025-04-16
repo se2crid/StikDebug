@@ -178,7 +178,7 @@ struct DisplayView: View {
                             .foregroundColor(.primary)
                         
                         VStack(alignment: .leading, spacing: 6) {
-                            Toggle("Load App Icons when Enabling JIT", isOn: $loadAppIconsOnJIT)
+                            Toggle("Load App Icons", isOn: $loadAppIconsOnJIT)
                                 .foregroundColor(.primary)
                                 .tint(.green)
                             

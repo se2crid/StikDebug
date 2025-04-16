@@ -60,7 +60,7 @@ struct SettingsView: View {
         ZStack {
             Color(UIColor.systemBackground)
                 .ignoresSafeArea()
-
+            
             ScrollView {
                 VStack(spacing: 12) {
                     // App Logo and Username Section
@@ -238,7 +238,6 @@ struct SettingsView: View {
                             .background(Color(UIColor.tertiarySystemBackground))
                             .cornerRadius(12)
                             
-                            // Helper text shown separately below the status indicator
                             if !(mounted || (mountProg.mountProgress == 100)) {
                                 Text("Import pairing file and restart the app to mount DDI")
                                     .font(.system(.caption, design: .rounded))
@@ -246,7 +245,6 @@ struct SettingsView: View {
                                     .padding(.horizontal, 4)
                             }
                             
-                            // Only show progress if actively mounting
                             if mountProg.mountProgress > 0 && mountProg.mountProgress < 100 && !mounted {
                                 VStack(spacing: 8) {
                                     HStack {
@@ -291,14 +289,12 @@ struct SettingsView: View {
                                 .foregroundColor(.primary)
                                 .padding(.bottom, 4)
                             
-                            // Main Developers
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Creators")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                 
                                 HStack(spacing: 16) {
-                                    // App Creator
                                     VStack(spacing: 8) {
                                         ProfileImage(url: developerProfiles["Stephen"] ?? "")
                                             .frame(width: 60, height: 60)
@@ -321,7 +317,6 @@ struct SettingsView: View {
                                         }
                                     }
                                     
-                                    // Library Developer
                                     VStack(spacing: 8) {
                                         ProfileImage(url: developerProfiles["jkcoxson"] ?? "")
                                             .frame(width: 60, height: 60)
@@ -349,13 +344,11 @@ struct SettingsView: View {
                             Divider()
                                 .padding(.vertical, 8)
                             
-                            // Collaborators in vertical stack
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Developers")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                 
-                                // Vertical stack of collaborators
                                 VStack(spacing: 12) {
                                     CollaboratorRow(name: "Stossy11", url: "https://github.com/Stossy11", imageUrl: developerProfiles["Stossy11"] ?? "")
                                     CollaboratorRow(name: "Neo", url: "https://neoarz.xyz/", imageUrl: developerProfiles["Neo"] ?? "")
@@ -379,7 +372,6 @@ struct SettingsView: View {
                                 .padding(.bottom, 4)
                             
                             VStack(spacing: 6) {
-                                // System Logs button
                                 Button(action: {
                                     showingConsoleLogsView = true
                                 }) {
@@ -397,7 +389,6 @@ struct SettingsView: View {
                                 }
                                 .padding(.vertical, 8)
                                 
-                                // App Folder button
                                 Button(action: {
                                     openAppFolder()
                                 }) {
@@ -436,7 +427,7 @@ struct SettingsView: View {
                                 .padding(.bottom, 4)
                             
                             Button(action: {
-                                if let url = URL(string: "https://example.com/user-manual") {
+                                if let url = URL(string: "") {
                                     UIApplication.shared.open(url)
                                 }
                             }) {
@@ -444,12 +435,9 @@ struct SettingsView: View {
                                     Image(systemName: "questionmark.circle")
                                         .font(.system(size: 18))
                                         .foregroundColor(.primary.opacity(0.8))
-                                    Text("User Manual")
+                                    Text("User Manual (Coming Soon)")
                                         .foregroundColor(.primary.opacity(0.8))
                                     Spacer()
-                                    Image(systemName: "chevron.right")
-                                        .font(.system(size: 14))
-                                        .foregroundColor(accentColor)
                                 }
                                 .padding(.vertical, 8)
                             }
@@ -464,6 +452,7 @@ struct SettingsView: View {
                         }
                         .padding(.vertical, 20)
                         .padding(.horizontal, 16)
+                        .frame(maxWidth: .infinity) // Ensures this card fills the available width
                     }
                     
                     // Version info
@@ -490,7 +479,6 @@ struct SettingsView: View {
         ) { result in
             switch result {
             case .success(let urls):
-                // Get the first URL from the array
                 guard let url = urls.first else { return }
                 
                 let fileManager = FileManager.default
@@ -505,14 +493,12 @@ struct SettingsView: View {
                         try fileManager.copyItem(at: url, to: URL.documentsDirectory.appendingPathComponent("pairingFile.plist"))
                         print("File copied successfully!")
                         
-                        // Show progress bar and initialize progress
                         DispatchQueue.main.async {
                             isImportingFile = true
                             importProgress = 0.0
                             pairingFileIsValid = false
                         }
                         
-                        // Create timer to update progress
                         let progressTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { timer in
                             DispatchQueue.main.async {
                                 if importProgress < 1.0 {
@@ -522,12 +508,10 @@ struct SettingsView: View {
                                     isImportingFile = false
                                     pairingFileIsValid = true
                                     
-                                    // Show success message
                                     withAnimation {
                                         showPairingFileMessage = true
                                     }
                                     
-                                    // Hide message after delay
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                         withAnimation {
                                             showPairingFileMessage = false
@@ -537,10 +521,7 @@ struct SettingsView: View {
                             }
                         }
                         
-                        // Ensure timer keeps running
                         RunLoop.current.add(progressTimer, forMode: .common)
-                        
-                        // Start heartbeat in background
                         startHeartbeatInBackground()
                         
                     } catch {
@@ -561,7 +542,7 @@ struct SettingsView: View {
             loadCustomAccentColor()
         }
     }
-
+    
     private func loadCustomAccentColor() {
         if customAccentColorHex.isEmpty {
             selectedAccentColor = .blue
@@ -569,11 +550,11 @@ struct SettingsView: View {
             selectedAccentColor = Color(hex: customAccentColorHex) ?? .blue
         }
     }
-
+    
     private func saveCustomAccentColor(_ color: Color) {
         customAccentColorHex = color.toHex() ?? ""
     }
-
+    
     private func changeAppIcon(to iconName: String) {
         selectedAppIcon = iconName
         UIApplication.shared.setAlternateIconName(iconName == "AppIcon" ? nil : iconName) { error in
@@ -582,7 +563,7 @@ struct SettingsView: View {
             }
         }
     }
-
+    
     private func iconButton(_ label: String, icon: String) -> some View {
         Button(action: {
             changeAppIcon(to: icon)
@@ -603,7 +584,7 @@ struct SettingsView: View {
         }
         .padding(.horizontal)
     }
-
+    
     private func openAppFolder() {
         if let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
             let path = documentsURL.absoluteString.replacingOccurrences(of: "file://", with: "shareddocuments://")
@@ -618,7 +599,8 @@ struct SettingsView: View {
     }
 }
 
-// Helper components
+// MARK: - Helper Components
+
 struct SettingsCard<Content: View>: View {
     let content: Content
     
@@ -699,7 +681,6 @@ struct CollaboratorGridItem: View {
             VStack(spacing: 8) {
                 ProfileImage(url: imageUrl)
                     .frame(width: 50, height: 50)
-                
                 Text(name)
                     .foregroundColor(.primary)
                     .fontWeight(.medium)
@@ -746,7 +727,6 @@ struct ProfileImage: View {
     
     private func loadImage() {
         guard let imageUrl = URL(string: url) else { return }
-        
         URLSession.shared.dataTask(with: imageUrl) { data, response, error in
             if let data = data, let downloadedImage = UIImage(data: data) {
                 DispatchQueue.main.async {
@@ -781,12 +761,10 @@ struct CollaboratorRow: View {
             HStack(spacing: 12) {
                 ProfileImage(url: imageUrl)
                     .frame(width: 40, height: 40)
-                
                 VStack(alignment: .leading, spacing: 2) {
                     Text(name)
                         .foregroundColor(.primary)
                         .fontWeight(.medium)
-
                     if let quote = quote {
                         Text("“\(quote)”")
                             .font(.subheadline)
@@ -795,9 +773,7 @@ struct CollaboratorRow: View {
                             .truncationMode(.tail)
                     }
                 }
-                
                 Spacer()
-                
                 Image(systemName: "link")
                     .font(.system(size: 16))
                     .foregroundColor(accentColor)
@@ -817,7 +793,6 @@ class FolderViewController: UIViewController {
     func openAppFolder() {
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         guard let documentsDirectory = paths.first else { return }
-        
         let containerPath = (documentsDirectory as NSString).deletingLastPathComponent
         
         if let folderURL = URL(string: "shareddocuments://\(containerPath)") {
