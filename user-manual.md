@@ -57,7 +57,7 @@ This document outlines the installation process for StikJIT, both with and witho
    Download the StikJIT IPA from [StikJIT](https://github.com/0-Blu/StikJIT/releases/latest).
 
 4. **Install via SideStore:**  
-   Use SideStore to install the downloaded IPA. Once the installation is complete, the process is finished.
+   Use SideStore or AltStore to install the downloaded IPA. Once the installation is complete, the process is finished.
 
 ## Installation with AltStore PAL (EU Only)
 
@@ -70,7 +70,7 @@ This document outlines the installation process for StikJIT, both with and witho
 3. **Enable JIT:**  
    In AltStore Classic, press and hold the desired app, then select the "Enable JIT" option to activate the feature.
 
-## Installation without SideStore
+## Installation without SideStore or AltStore
 
 If you prefer not to use SideStore, alternative methods such as Sideloadly or AltStore are available.
 
