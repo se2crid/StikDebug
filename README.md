@@ -67,19 +67,36 @@
 
 
 ## Contributing 
-```sh
-# Clone the repository
-git clone https://github.com/0-Blu/StikJIT.git
-cd StikJIT
 
-# Open in Xcode
-open StikJIT.xcodeproj
-```
 
-Then in Xcode:
-- Connect your iOS device
-- Select your device in Xcode
-- Build and run the project (⌘R)
+1. **Set up your development environment:**
+   ```sh
+   # Clone the repository
+   git clone https://github.com/0-Blu/StikJIT.git
+   cd StikJIT
+
+   # Open in Xcode
+   open StikJIT.xcodeproj
+   ```
+
+2. **Make your changes:**
+   - Connect your iOS device
+   - Select your device in Xcode
+   - Build and run the project (⌘R)
+   - Make and test your changes thoroughly
+
+3. **Submit your contribution:**
+   - Fork the repository
+   - Create a new branch for your feature/fix
+   - Commit your changes with clear commit messages
+   - Push to your fork
+   - Open a pull request with a detailed description of your changes
+
+> **Tip:** Before submitting a pull request, ensure you've:
+> - Tested your changes on a real device
+> - Followed the existing code style
+> - Added comments for complex logic
+> - Updated documentation if needed
 
 ## License  
 StikJIT is licensed under **AGPL-3.0**. See [`LICENSE`](LICENSE) for details.  
