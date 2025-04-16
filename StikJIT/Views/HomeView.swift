@@ -114,7 +114,7 @@ struct HomeView: View {
                     .background(accentColor)
                     .foregroundColor(accentColor.contrastText())
                     .cornerRadius(16)
-                    .shadow(color: Color.blue.opacity(0.3), radius: 8, x: 0, y: 4)
+                    .shadow(color: accentColor.opacity(0.3), radius: 8, x: 0, y: 4)
                 }
                 .padding(.horizontal, 20)
                 .sheet(isPresented: $showingConsoleLogsView) {
