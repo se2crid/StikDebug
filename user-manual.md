@@ -188,14 +188,15 @@ StosVPN is required for StikJIT to work properly. It is not needed for StikDebug
 - `InvalidString` (-999)
 - `InvalidArg` (-1000)
 
-# Mounting error codes
-1 - Reading the DDI files failed, they probably failed to download
-2 - Invalid target IP address (shouldn't happen, it's hardcoded)
-3 - Failed to read/parse the pairing file
-4 - Failed to create the TCP provider for the device (shouldn't happen, it's hardcoded)
-5 - Failed to read/parse the pairing file
-6 - Failed to connect to lockdownd (are you on cellular?)
-7 - Failed to start SSL session (bad pairing file?)
-8 - Failed to get the unique chip ID (send idevice logs to jkcoxson)
-9 - Failed to connect to image mounter (are you on 17.0-.4? send idevice logs to jkcoxson)
-10 - Mount failed (send idevice logs to jkcoxson)
+# Mounting Error Codes
+- `DdiFileReadError` (-1) – Reading the DDI files failed; they probably failed to download.
+- `InvalidTargetIPAddress` (-2) – Invalid target IP address (shouldn't happen, it's hardcoded).
+- `PairingFileParseError` (-3) – Failed to read/parse the pairing file.
+- `TcpProviderCreationError` (-4) – Failed to create the TCP provider for the device (shouldn't happen, it's hardcoded).
+- `PairingFileParseError` (-5) – Failed to read/parse the pairing file.
+- `LockdowndConnectionError` (-6) – Failed to connect to lockdownd (are you on cellular?).
+- `SslSessionStartError` (-7) – Failed to start SSL session (bad pairing file?).
+- `UniqueChipIdRetrievalError` (-8) – Failed to get the unique chip ID (send idevice logs to jkcoxson).
+- `ImageMounterConnectionError` (-9) – Failed to connect to image mounter (are you on 17.0-.4? send idevice logs to jkcoxson).
+- `MountFailure` (-10) – Mount failed (send idevice logs to jkcoxson).
+
