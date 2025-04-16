@@ -46,14 +46,13 @@ Downloads for Jitterbug Pair can be found [here.](https://github.com/osy/Jitterb
 
 This document outlines the installation process for StikJIT, both with and without SideStore, along with usage instructions, troubleshooting tips, and frequently asked questions.
 
-## Installation with SideStore
+## Installation with SideStore or AltStore Classic
 
-1. **Install SideStore:**  
-   Visit the [SideStore](https://sidestore.io/#get-started) website and follow the provided installation instructions.
+1. **Install SideStore of AltStore:**  
+   Visit the [SideStore](https://sidestore.io/#get-started) or [AltStore](https://altstore.io) website and follow the provided installation instructions.
 
 2. **Install StosVPN:**  
-   It is recommended to install [StosVPN](#) rather than using the WireGuard method, which has proven less reliable.
-
+   It is recommended to install [StosVPN](https://apps.apple.com/us/app/stosvpn/id6744003051).
 3. **Obtain the StikJIT IPA:**  
    Download the StikJIT IPA from [StikJIT](https://github.com/0-Blu/StikJIT/releases/latest).
 
