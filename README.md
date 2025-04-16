@@ -99,8 +99,7 @@ For detailed installation instructions, including setup with SideStore, AltStore
 > Before submitting a pull request, ensure you've:
 > - Tested your changes on a real device
 > - Followed the existing code style
-> - Added comments for complex logic
-> - Updated documentation if needed
+> - Added comments explaning what your pull request is meant to do
 
 ## License  
 StikJIT is licensed under **AGPL-3.0**. See [`LICENSE`](LICENSE) for details.  
