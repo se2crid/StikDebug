@@ -91,8 +91,9 @@
    - Commit your changes with clear commit messages
    - Push to your fork
    - Open a pull request with a detailed description of your changes
-
-> **Tip:** Before submitting a pull request, ensure you've:
+  
+> [!TIP]
+> Before submitting a pull request, ensure you've:
 > - Tested your changes on a real device
 > - Followed the existing code style
 > - Added comments for complex logic
