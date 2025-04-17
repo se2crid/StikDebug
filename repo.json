@@ -2,26 +2,33 @@
   "name": "StikJIT Repository",
   "identifier": "com.stik.sj",
   "subtitle": "AltStore/SideStore compatible source repository for StikJIT.",
+  "description": "An on-device JIT enabler for iOS versions 17.4+ (excluding iOS 18.4 beta 1), powered by idevice.",
+  "tintColor": "#293B45",
   "iconURL": "https://github.com/0-Blu/StikJIT/blob/main/assets/StikJIT.png?raw=true",
   "headerURL": "https://github.com/0-Blu/StikJIT/blob/main/assets/StikJIT.png?raw=true",
-  "tintColor": "#293B45",
-  "featuredApps": [
-    "com.stik.sj"
-  ],
   "apps": [
     {
       "name": "StikJIT",
       "bundleIdentifier": "com.stik.sj",
       "developerName": "Stephen",
       "subtitle": "An on-device JIT enabler for iOS versions 17.4+ (excluding iOS 18.4 beta 1), powered by idevice.",
+      "version": "1.3.2",
+      "versionDate": "2025-04-17",
+      "versionDescription": "What's Changed\r\n* Add check if 17.4+ is installed by @C4ndyF1sh in https://github.com/0-Blu/StikJIT/pull/128\r\n* Actually fix the -17 error by @0-Blu \r \nFull Changelog: https://github.com/0-Blu/StikJIT/compare/1.3.1...1.3.2",
+      "downloadURL": "https://github.com/0-Blu/StikJIT/releases/download/1.3.2/StikJIT_1.3.2.ipa",
       "localizedDescription": "Enable JIT capabilities for your sideloaded apps.",
       "iconURL": "https://github.com/0-Blu/StikJIT/blob/main/assets/StikJIT.png?raw=true",
       "tintColor": "#293B45",
-      "screenshots": [
+      "size": 6211946,
+      "screenshotURLs": [
         "https://github.com/0-Blu/StikJIT/blob/main/assets/views/dark/HomeScreen.PNG?raw=true",
         "https://github.com/0-Blu/StikJIT/blob/main/assets/views/dark/AppsList.PNG?raw=true",
         "https://github.com/0-Blu/StikJIT/blob/main/assets/views/dark/Settings.PNG?raw=true"
       ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      },
       "versions": [
         {
           "version": "1.3.2",
@@ -44,39 +51,34 @@
           "date": "2025-04-12",
           "size": 6210215,
           "downloadURL": "https://github.com/0-Blu/StikJIT/releases/download/1.3/StikJIT.ipa",
-          "localizedDescription": "Enhanced & Advanced: Improved performance: Fixes disk image unbounting in the background, DNS Blocker Check, UI tweaks: custom accent color picker, more logs."
+          "localizedDescription": "Enhanced & Advanced: Improved performance: Fixes disk image unbounting in the background, DNS Blocker Check, UI tweaks: custom accent color picker, more logs.",
+          "minOSVersion": "17.4"
         },
         {
           "version": "1.2",
           "date": "2025-04-07",
           "localizedDescription": "Smooth Sailing: Improved performance: Prevented UI stutter in App List. UI tweaks: Light theme for notifications, better aligned UI elements, expanded theming support, fixed user feedback when get-task-allow is missing.",
           "downloadURL": "https://github.com/0-Blu/StikJIT/releases/download/1.2/StikJit_1.2.ipa",
-          "size": 5922690
+          "size": 5922690,
+          "minOSVersion": "17.4"
         },
         {
           "version": "1.1",
           "date": "2025-04-01",
           "localizedDescription": "Bug fixes and UI improvements. Enhanced system log viewer and better error handling.",
           "downloadURL": "https://github.com/0-Blu/StikJIT/releases/download/1.1/StikJit_1.1.ipa",
-          "size": 5800000
+          "size": 5800000,  
+          "minOSVersion": "17.4"
         },
         {
           "version": "1.0",
           "date": "2025-03-26",
           "localizedDescription": "Initial release of StikJIT",
           "downloadURL": "https://github.com/0-Blu/StikJIT/releases/download/1.0/StikJit_1.0.ipa",
-          "size": 5000000
+          "size": 5000000,
+          "minOSVersion": "17.4"
         }
-      ],
-      "appPermissions": {
-        "entitlements": [],
-        "privacy": {}
-      },
-      "version": "1.3.2",
-      "versionDate": "2025-04-17",
-      "versionDescription": "What's Changed\r\n* Add check if 17.4+ is installed by @C4ndyF1sh in https://github.com/0-Blu/StikJIT/pull/128\r\n* Actually fix the -17 error by @0-Blu \r \nFull Changelog: https://github.com/0-Blu/StikJIT/compare/1.3.1...1.3.2",
-      "downloadURL": "https://github.com/0-Blu/StikJIT/releases/download/1.3.2/StikJIT_1.3.2.ipa",
-      "size": 6211946
+      ]
     }
   ],
   "news": [
