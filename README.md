@@ -43,7 +43,7 @@
 - No data collection—ensuring full privacy. 
 
 ## Installation Guide
-For detailed installation instructions, including setup with SideStore, AltStore, or without any store, please refer to our [User Manual](user-manual.md).
+For detailed installation instructions, including setup with SideStore, AltStore, or Altstore PAL (EU), please refer to our [User Manual](user-manual.md).
 
 ## Building  
 
