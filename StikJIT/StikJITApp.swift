@@ -41,13 +41,6 @@ struct WelcomeSheetView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
             
-            Text("You might encounter a -17 error after your initial launch. Simply tap 'OK' and the issue will be resolved once a valid pairing file has been imported.")
-                .font(.callout)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-
-            
             Button(action: {
                 onDismiss?()
             }) {

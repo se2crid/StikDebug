@@ -126,7 +126,6 @@ struct SettingsView: View {
                                 .font(.headline)
                                 .foregroundColor(.primary)
                                 .padding(.bottom, 4)
-                            
                             Toggle("Skip get-task-allow Check", isOn: $doSkipGetTaskAllowCheck)
                                 .foregroundColor(.primary)
                                 .padding(.vertical, 6)
@@ -427,7 +426,7 @@ struct SettingsView: View {
                                 .padding(.bottom, 4)
                             
                             Button(action: {
-                                if let url = URL(string: "") {
+                                if let url = URL(string: "https://github.com/0-Blu/StikDebug-Guide/blob/main/pairing_file.md") {
                                     UIApplication.shared.open(url)
                                 }
                             }) {
@@ -435,7 +434,7 @@ struct SettingsView: View {
                                     Image(systemName: "questionmark.circle")
                                         .font(.system(size: 18))
                                         .foregroundColor(.primary.opacity(0.8))
-                                    Text("User Manual (Coming Soon)")
+                                    Text("Pairing File Guide")
                                         .foregroundColor(.primary.opacity(0.8))
                                     Spacer()
                                 }
