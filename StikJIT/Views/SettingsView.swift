@@ -480,11 +480,9 @@ struct SettingsView: View {
                     // Version info should now come after Advanced Settings
                     HStack {
                         Spacer()
-                        
-                        Text("Version \(appVersion) • iOS \(UIDevice.current.systemVersion)")
+                        Text("Version \(appVersion) • iOS \(simulatedOSVersion)")
                             .font(.footnote)
                             .foregroundColor(.secondary.opacity(0.8))
-                        
                         Spacer()
                     }
                     .padding(.top, 8)
