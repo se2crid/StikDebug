@@ -181,6 +181,7 @@ struct HeartbeatApp: App {
     @StateObject private var dnsChecker = DNSChecker()  // New DNS check state object
     @AppStorage("appTheme") private var appTheme: String = "system"
     @AppStorage("overrideOSVersion") private var overrideOSVersion: String = ""
+    @AppStorage("simulatedOSVersion") private var simulatedOSVersion: String = "17.0" // Default to iOS 17
     @Environment(\.scenePhase) private var scenePhase   // Observe scene lifecycle
     
     let urls: [String] = [
@@ -599,6 +600,7 @@ struct LoadingView: View {
     @AppStorage("customAccentColor") private var customAccentColorHex: String = ""
     @AppStorage("appTheme") private var appTheme: String = "system"
     @AppStorage("overrideOSVersion") private var overrideOSVersion: String = ""
+    @AppStorage("simulatedOSVersion") private var simulatedOSVersion: String = "17.0" // Default to iOS 17
     
     private var accentColor: Color {
         if customAccentColorHex.isEmpty {
@@ -649,16 +651,15 @@ struct LoadingView: View {
                     animate = true
 
                     let os = ProcessInfo.processInfo.operatingSystemVersion
-                    // Modify the iOS version display logic to simulate 18.4 beta 1
-                    let simulatedOSVersion = "18.4 beta 1"
-                    let osVersionToDisplay = overrideOSVersion.isEmpty ? simulatedOSVersion : overrideOSVersion
-                    if os.majorVersion < 17 || (os.majorVersion == 17 && os.minorVersion < 4) {
-                        // Show alert for unsupported host iOS version
+                    // Modify the iOS version display logic to use the simulatedOSVersion
+                    let osVersionToDisplay = overrideOSVersion.isEmpty ? simulatedOSVersion : overrideOSVersion;
+
+                    // Update the checker to read from simulatedOSVersion
+                    if os.majorVersion < 17 || (os.majorVersion == 17 && os.minorVersion < 0) {
                         alertTitle = "Unsupported OS Version"
-                        alertMessage = "StikJIT only supports 17.4 and above. Your device is running iOS/iPadOS \(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
+                        alertMessage = "StikJIT only supports 17.0 and above. Your device is running iOS/iPadOS \(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
                         showAlert = true
                     } else if os.majorVersion == 18 && os.minorVersion == 4 && os.patchVersion == 0 {
-                        // Check for iOS 18.4 beta 1 (22E5200)
                         if let build = ProcessInfo.processInfo.operatingSystemVersionString.split(separator: ")").first?.split(separator: "(").last, build == "22E5200" {
                             alertTitle = "Unsupported OS Version"
                             alertMessage = "StikJIT does not support iOS 18.4 beta 1 (22E5200)."
