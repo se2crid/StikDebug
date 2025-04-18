@@ -13,6 +13,7 @@ struct SettingsView: View {
     @AppStorage("selectedAppIcon") private var selectedAppIcon: String = "AppIcon"
     @AppStorage("autoQuitAfterEnablingJIT") private var doAutoQuitAfterEnablingJIT = false
     @AppStorage("skipGetTaskAllowCheck") private var doSkipGetTaskAllowCheck = false
+    @AppStorage("simulatedOSVersion") private var simulatedOSVersion: String = "17.0" // Default to iOS 17
     @State private var isShowingPairingFilePicker = false
     @Environment(\.colorScheme) private var colorScheme
 
