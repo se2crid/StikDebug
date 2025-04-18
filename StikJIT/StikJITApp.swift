@@ -650,7 +650,7 @@ struct LoadingView: View {
                 .onAppear {
                     animate = true
 
-                    let os = ProcessInfo.processInfo.operatingSystemVersion
+                    let os = OperatingSystemVersion(majorVersion: 17, minorVersion: 0, patchVersion: 0)
                     // Modify the iOS version display logic to use the simulatedOSVersion
                     let osVersionToDisplay = overrideOSVersion.isEmpty ? simulatedOSVersion : overrideOSVersion;
 
