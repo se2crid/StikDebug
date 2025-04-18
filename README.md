@@ -46,11 +46,11 @@
 For detailed installation instructions, including setup with SideStore, AltStore, or Altstore PAL (EU), please refer to our [User Manual](user-manual.md).
 
 <h1 align="center">
-<a href="altstore://source?url=https://raw.githubusercontent.com/0-Blu/StikJIT/main/repo.json"><img src="/assets/downloadimages/AddtoAltstore.png" height="60"></a>
+<a href="https://tinyurl.com/346p8xj6"><img src="/assets/downloadimages/AddtoAltstore.png" height="60"></a>
 &nbsp;
-<a href="sidestore://source?url=https://raw.githubusercontent.com/0-Blu/StikJIT/main/repo.json"><img src="/assets/downloadimages/AddtoSidestore.png" height="60"></a>
+<a href="https://tinyurl.com/4aphp9uc"><img src="/assets/downloadimages/AddtoSidestore.png" height="60"></a>
 &nbsp;
-<a href="https://github.com/0-Blu/StikJIT/releases/latest/download/StikJIT.ipa"><img src="/assets/downloadimages/downloadipa.png" height="60"></a>
+<a href="https://github.com/0-Blu/StikJIT/releases/download/1.3.2/StikJIT_1.3.2.ipa"><img src="/assets/downloadimages/downloadipa.png" height="60"></a>
 &nbsp;
 <a href="https://raw.githubusercontent.com/0-Blu/StikJIT/main/repo.json"><img src="/assets/downloadimages/repo.png" height="60"></a>
 &nbsp;
