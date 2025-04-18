@@ -180,6 +180,7 @@ struct HeartbeatApp: App {
     @StateObject private var mount = MountingProgress.shared
     @StateObject private var dnsChecker = DNSChecker()  // New DNS check state object
     @AppStorage("appTheme") private var appTheme: String = "system"
+    @AppStorage("overrideOSVersion") private var overrideOSVersion: String = ""
     @Environment(\.scenePhase) private var scenePhase   // Observe scene lifecycle
     
     let urls: [String] = [
@@ -597,6 +598,7 @@ struct LoadingView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("customAccentColor") private var customAccentColorHex: String = ""
     @AppStorage("appTheme") private var appTheme: String = "system"
+    @AppStorage("overrideOSVersion") private var overrideOSVersion: String = ""
     
     private var accentColor: Color {
         if customAccentColorHex.isEmpty {
@@ -647,18 +649,19 @@ struct LoadingView: View {
                     animate = true
 
                     let os = ProcessInfo.processInfo.operatingSystemVersion
-                    let versionString = ProcessInfo.processInfo.operatingSystemVersionString
-                    print("Detected OS version: \(os.majorVersion).\(os.minorVersion).\(os.patchVersion)")
-                    print("Detected OS version string: \(versionString)")
+                    // Modify the iOS version display logic to simulate 18.4 beta 1
+                    let simulatedOSVersion = "18.4 beta 1"
+                    let osVersionToDisplay = overrideOSVersion.isEmpty ? simulatedOSVersion : overrideOSVersion
                     if os.majorVersion < 17 || (os.majorVersion == 17 && os.minorVersion < 4) {
+                        // Show alert for unsupported host iOS version
                         alertTitle = "Unsupported OS Version"
                         alertMessage = "StikJIT only supports 17.4 and above. Your device is running iOS/iPadOS \(os.majorVersion).\(os.minorVersion).\(os.patchVersion)"
                         showAlert = true
-                    } else if os.majorVersion == 18 && os.minorVersion == 3 && os.patchVersion == 1 {
-                        // Check for iOS 18.3.1 (22D72)
-                        if let build = versionString.split(separator: "(").last?.split(separator: ")").first, build == "22D72" {
+                    } else if os.majorVersion == 18 && os.minorVersion == 4 && os.patchVersion == 0 {
+                        // Check for iOS 18.4 beta 1 (22E5200)
+                        if let build = ProcessInfo.processInfo.operatingSystemVersionString.split(separator: ")").first?.split(separator: "(").last, build == "22E5200" {
                             alertTitle = "Unsupported OS Version"
-                            alertMessage = "StikJIT does not support iOS 18.3.1 (22D72)."
+                            alertMessage = "StikJIT does not support iOS 18.4 beta 1 (22E5200)."
                             showAlert = true
                         }
                     }
