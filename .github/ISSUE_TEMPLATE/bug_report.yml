@@ -30,7 +30,7 @@ body:
     id: logs
     attributes:
       label: Relevant logs or screenshots
-      description: If applicable, please add screenshots or logs to help explain your problem
+      description: If applicable, please add screenshots or logs/screenshots to help explain your problem
       placeholder: Paste any relevant logs here
     validations:
       required: false
