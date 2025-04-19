@@ -154,9 +154,9 @@ jobs:
           latest_version = get_latest_ios_version()
           print(f"Latest iOS version detected: {latest_version}")
 
-          # Update the version range in the README
+          # Update the version range in the README 
           updated_content = re.sub(
-              r'An on-device JIT enabler for iOS versions 17\.4\+ \(17\.4-[^)]+\)',
+              r'An on-device JIT enabler for iOS versions 17\.4\+ \(17\.4-[^)]+\)\)+',
               f'An on-device JIT enabler for iOS versions 17.4+ (17.4-{latest_version} (latest))',
               content
           )
