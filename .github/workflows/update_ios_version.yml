@@ -1,0 +1,102 @@
+name: Update iOS Version in README
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight
+  workflow_dispatch:  # Allow manual triggering
+
+permissions:
+  contents: write
+
+jobs:
+  update-ios-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4
+
+      - name: Update iOS version in README
+        id: update_readme
+        run: |
+          python - <<EOF
+          import re
+          import requests
+          from bs4 import BeautifulSoup
+
+          def get_latest_ios_version():
+              # Fetch the latest iOS version from Wikipedia (or other reliable source)
+              try:
+                  response = requests.get('https://en.wikipedia.org/wiki/IOS_version_history')
+                  soup = BeautifulSoup(response.text, 'html.parser')
+                  
+                  # Find the latest iOS version in the tables
+                  tables = soup.find_all('table', {'class': 'wikitable'})
+                  for table in tables:
+                      headers = [header.text.strip() for header in table.find_all('th')]
+                      if 'Version' in headers:
+                          for row in table.find_all('tr')[1:]:  # Skip header row
+                              cells = row.find_all('td')
+                              if cells and len(cells) >= 2:
+                                  version_text = cells[0].text.strip()
+                                  if version_text.startswith('18.'):
+                                      # Extract version including beta if present
+                                      if 'beta' in version_text.lower():
+                                          match = re.search(r'(18\.\d+)[^\d]+(\d+)', version_text)
+                                          if match:
+                                              return f"{match.group(1)}b{match.group(2)}"
+                                      else:
+                                          match = re.search(r'(18\.\d+)', version_text)
+                                          if match:
+                                              return match.group(1)
+                  return "18.5b2"  # Default fallback
+              except Exception as e:
+                  print(f"Error fetching iOS version: {e}")
+                  return "18.5b2"  # Default fallback
+
+          # Read the README.md file
+          with open('README.md', 'r') as file:
+              content = file.read()
+
+          # Get the latest iOS version
+          latest_version = get_latest_ios_version()
+          print(f"Latest iOS version detected: {latest_version}")
+
+          # Update the version range in the README
+          updated_content = re.sub(
+              r'An on-device JIT enabler for iOS versions 17\.4\+ \(17\.4-[^)]+\)',
+              f'An on-device JIT enabler for iOS versions 17.4+ (17.4-{latest_version} (latest))',
+              content
+          )
+
+          # Check if there was an actual change
+          if content != updated_content:
+              # Write the updated content back to the README
+              with open('README.md', 'w') as file:
+                  file.write(updated_content)
+              print("::set-output name=changes::true")
+          else:
+              print("No changes needed to README")
+              print("::set-output name=changes::false")
+          EOF
+
+      - name: Commit and push if there are changes
+        if: steps.update_readme.outputs.changes == 'true'
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add README.md
+          git commit -m "Update iOS version range in README [skip ci]"
+          git push origin main 
