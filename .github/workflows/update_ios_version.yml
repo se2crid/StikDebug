@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests beautifulsoup4
+          pip install requests
 
       - name: Update iOS version in README
         id: update_readme
@@ -34,37 +34,117 @@ jobs:
           python - <<EOF
           import re
           import requests
-          from bs4 import BeautifulSoup
 
           def get_latest_ios_version():
-              # Fetch the latest iOS version from Wikipedia (it has the latest versions lol)
-              try:
-                  response = requests.get('https://en.wikipedia.org/wiki/IOS_version_history')
-                  soup = BeautifulSoup(response.text, 'html.parser')
+              # Function to parse the version formats into a comparable format
+              def parse_version(v):
+                  # Split into main and suffix (e.g., "11.2.4b3" or "11.2.4rc2")
+                  match = re.match(r'^([\d\.]+)(b\d+|rc\d+)?$', v)
+                  if not match:
+                      return [0, 0, 0, 0, 0]  # Default for unparseable versions
                   
-                  # Find the latest iOS version in the tables
-                  tables = soup.find_all('table', {'class': 'wikitable'})
-                  for table in tables:
-                      headers = [header.text.strip() for header in table.find_all('th')]
-                      if 'Version' in headers:
-                          for row in table.find_all('tr')[1:]:  # Skip header row
-                              cells = row.find_all('td')
-                              if cells and len(cells) >= 2:
-                                  version_text = cells[0].text.strip()
-                                  if version_text.startswith('18.'):
-                                      # Extract version including beta if present
-                                      if 'beta' in version_text.lower():
-                                          match = re.search(r'(18\.\d+)[^\d]+(\d+)', version_text)
-                                          if match:
-                                              return f"{match.group(1)}b{match.group(2)}"
-                                      else:
-                                          match = re.search(r'(18\.\d+)', version_text)
-                                          if match:
-                                              return match.group(1)
-                  return "18.5b2"  # Default fallback
+                  main = match.group(1)
+                  suffix = match.group(2) or ''
+                  
+                  # Convert version parts to integers, suffix stays string for now
+                  parts = [int(p) for p in main.split('.')]
+                  # Pad with zeros if needed
+                  while len(parts) < 3:
+                      parts.append(0)
+
+                  if suffix.startswith('b'):
+                      # Beta versions come before RCs and finals
+                      parts.append(-2)
+                      parts.append(int(suffix[1:]))  # remove 'b' and convert to int
+                  elif suffix.startswith('rc'):
+                      # RC versions come after betas but before final
+                      parts.append(-1)
+                      parts.append(int(suffix[2:]))  # remove 'rc' and convert to int
+                  else:
+                      # Final releases come after all betas and RCs
+                      parts.append(0)  # no suffix is considered highest
+                      parts.append(0)
+
+                  return parts
+              
+              try:
+                  # Fetch data from the AppleDB API
+                  url = "https://api.appledb.dev/ios/iOS/main.json"
+                  response = requests.get(url, timeout=10)
+                  data = response.json()
+
+                  # Initialize variable to track latest iOS version
+                  latest_ios = None
+                  latest_version_parts = None
+
+                  # Loop through all releases
+                  for version_info in data:
+                      try:
+                          # Only consider iOS 18+ versions
+                          if not version_info.get('version', '').startswith('18'):
+                              continue
+                              
+                          # Consistent beta/RC formatting
+                          name = version_info['version'].replace(" beta ", "b").replace(" beta", "b1").replace(" RC ", "rc").replace(" RC", "rc1")
+                          
+                          # Filter out Simulator releases and Rapid-Security-Response updates
+                          if "Simulator" in name or "(" in name:
+                              continue
+                              
+                          version_parts = parse_version(name)
+                          
+                          # Check if this version is newer than our current latest
+                          if latest_version_parts is None or version_parts > latest_version_parts:
+                              latest_ios = version_info
+                              latest_version_parts = version_parts
+                              latest_ios['compact_name'] = name
+                      except Exception as e:
+                          print(f"Error processing version entry: {e}")
+                          continue
+
+                  if latest_ios:
+                      print(f"Latest iOS version from AppleDB: {latest_ios['compact_name']}")
+                      return latest_ios['compact_name']
+                  else:
+                      print("No iOS 18+ versions found, using fallback")
+                      return "18.5b2"  # Default fallback
+                      
               except Exception as e:
-                  print(f"Error fetching iOS version: {e}")
-                  return "18.5b2"  # Default fallback
+                  print(f"Error fetching iOS version from AppleDB: {e}")
+                  
+                  # Try ipsw.me API as a backup
+                  try:
+                      print("Trying ipsw.me API as backup...")
+                      url = "https://api.ipsw.me/v4/releases"
+                      response = requests.get(url, timeout=10)
+                      releases = response.json()
+                      
+                      # Find latest iOS 18+ version
+                      latest_version = None
+                      latest_version_parts = None
+                      
+                      for release in releases:
+                          if release.get('version', '').startswith('18'):
+                              version = release['version']
+                              # Format beta versions if present
+                              if 'beta' in release.get('tags', []):
+                                  beta_num = next((tag for tag in release.get('tags', []) if tag.startswith('beta')), 'beta1')
+                                  beta_num = beta_num.replace('beta', '')
+                                  version = f"{version}b{beta_num}"
+                              
+                              version_parts = parse_version(version)
+                              if latest_version_parts is None or version_parts > latest_version_parts:
+                                  latest_version = version
+                                  latest_version_parts = version_parts
+                      
+                      if latest_version:
+                          print(f"Latest iOS version from ipsw.me: {latest_version}")
+                          return latest_version
+                          
+                  except Exception as backup_e:
+                      print(f"Error fetching from backup source: {backup_e}")
+                  
+                  return "18.5b2"  # Default fallback if all sources fail
 
           # Read the README.md file
           with open('README.md', 'r') as file:
