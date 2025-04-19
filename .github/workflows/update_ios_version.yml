@@ -37,7 +37,7 @@ jobs:
           from bs4 import BeautifulSoup
 
           def get_latest_ios_version():
-              # Fetch the latest iOS version from Wikipedia (or other reliable source)
+              # Fetch the latest iOS version from Wikipedia (it has the latest versions lol)
               try:
                   response = requests.get('https://en.wikipedia.org/wiki/IOS_version_history')
                   soup = BeautifulSoup(response.text, 'html.parser')
