@@ -46,7 +46,7 @@
 For detailed installation instructions, including setup with SideStore, AltStore, or Altstore PAL (EU), please refer to our [User Manual](user-manual.md).
 
 <h1 align="center">
-<a href="https://tinyurl.com/346p8xj6"><img src="/assets/downloadimages/AddtoAltstorePAL.png" height="60"></a>
+<a href="https://tinyurl.com/346p8xj6"><img src="/assets/downloadimages/AltstorePAL.png" height="60"></a>
 &nbsp;
 <a href="https://tinyurl.com/4aphp9uc"><img src="/assets/downloadimages/AddtoSidestore.png" height="60"></a>
 &nbsp;
