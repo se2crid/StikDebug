@@ -18,11 +18,3 @@ body:
       placeholder: This feature could work by... and might look like...
     validations:
       required: false
-  - type: textarea
-    id: alternatives
-    attributes:
-      label: Alternatives considered
-      description: Have you considered any alternatives or workarounds?
-      placeholder: I've tried... but it doesn't work well because...
-    validations:
-      required: false 
