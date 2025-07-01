@@ -398,6 +398,11 @@ struct HomeView: View {
                 }
             }
         }
+        
+        // If cellular data is currently active, attempt to run the optional shortcut (if installed).
+        if NetworkMonitor.shared.isCellularActive {
+            ShortcutManager.runToggleCellularShortcut()
+        }
     }
     
     private func startJITInBackground(with pid: Int) {
@@ -425,6 +430,11 @@ struct HomeView: View {
                     exit(0)
                 }
             }
+        }
+        
+        // If cellular data is currently active, attempt to run the optional shortcut (if installed).
+        if NetworkMonitor.shared.isCellularActive {
+            ShortcutManager.runToggleCellularShortcut()
         }
     }
 }

@@ -199,6 +199,38 @@ struct SettingsView: View {
                         .padding(.horizontal, 16)
                     }
                     
+                    // Shortcuts / Automation section
+                    SettingsCard {
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text("Automation")
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                                .padding(.bottom, 4)
+
+                            Text("For best reliability when using cellular data, you can install a Shortcuts automation that quickly toggles cellular data on & off each time JIT is enabled.")
+                                .font(.system(.caption, design: .rounded))
+                                .foregroundColor(.secondary)
+
+                            Button(action: {
+                                ShortcutManager.openInstallPage()
+                            }) {
+                                HStack {
+                                    Image(systemName: "plus.app")
+                                        .font(.system(size: 18))
+                                    Text("Install Cellular Toggle Shortcut")
+                                        .fontWeight(.medium)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .foregroundColor(accentColor.contrastText())
+                                .background(accentColor)
+                                .cornerRadius(12)
+                            }
+                        }
+                        .padding(.vertical, 20)
+                        .padding(.horizontal, 16)
+                    }
+                    
                     // Developer Disk Image section
                     SettingsCard {
                         VStack(alignment: .leading, spacing: 20) {

@@ -1,0 +1,2 @@
+// Direct-import URL opens Shortcuts' add sheet immediately
+private static let installLink = "shortcuts://import-shortcut?url=https%3A%2F%2Fwww.icloud.com%2Fshortcuts%2F521c6f152fa049e6b1ba0e1c855794fc" 
