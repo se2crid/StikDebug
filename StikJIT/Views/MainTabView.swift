@@ -10,6 +10,7 @@ import SwiftUI
 struct MainTabView: View {
     @AppStorage("customAccentColor") private var customAccentColorHex: String = ""
     @AppStorage("enableAdvancedOptions") private var enableAdvancedOptions = false
+    @AppStorage("enableTesting") private var enableTesting = false
     
     private var accentColor: Color {
         if customAccentColorHex.isEmpty {
@@ -29,6 +30,12 @@ struct MainTabView: View {
                 ScriptListView()
                     .tabItem {
                         Label("Scripts", systemImage: "scroll")
+                    }
+            }
+            if enableTesting {
+                IPAAppManagerView()
+                    .tabItem {
+                        Label("Testing", systemImage: "square.grid.2x2")
                     }
             }
             SettingsView()

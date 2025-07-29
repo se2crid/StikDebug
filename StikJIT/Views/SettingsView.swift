@@ -13,6 +13,8 @@ struct SettingsView: View {
     @AppStorage("selectedAppIcon") private var selectedAppIcon: String = "AppIcon"
     @AppStorage("useDefaultScript") private var useDefaultScript = false
     @AppStorage("enableAdvancedOptions") private var enableAdvancedOptions = false
+    @AppStorage("enableAdvancedBetaOptions") private var enableAdvancedBetaOptions = false
+    @AppStorage("enableTesting") private var enableTesting = false
     @AppStorage("enablePiP") private var enablePiP = false
 
     @State private var isShowingPairingFilePicker = false
@@ -284,6 +286,14 @@ struct SettingsView: View {
                                                    Toggle("Picture in Picture", isOn: $enablePiP)
                                                        .foregroundColor(.primary)
                                                        .padding(.vertical, 6)
+                                                   Toggle("Enable Advanced Beta Options", isOn: $enableAdvancedBetaOptions)
+                                                       .foregroundColor(.primary)
+                                                       .padding(.vertical, 6)
+                                                   if enableAdvancedBetaOptions {
+                                                       Toggle("Enable Self Developed Application Testing", isOn: $enableTesting)
+                                                           .foregroundColor(.primary)
+                                                           .padding(.vertical, 6)
+                                                   }
                                                }
                                            }
                                            .padding(.vertical, 20)
