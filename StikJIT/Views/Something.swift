@@ -371,7 +371,7 @@ struct IPAAppManagerView: View {
             .navigationTitle("Testing")
             .stikImporter(isPresented: $pickerShown,
                           selectedURLs: .constant([]),
-                          allowedContentTypes: [.ipa],
+                          allowedContentTypes: [.item],
                           allowsMultipleSelection: false) { urls in
                 if let u = urls.first {
                     do { try mgr.importIPA(from: u); notify("File imported", "File saved to Imports") }
@@ -531,12 +531,12 @@ private struct AddCertView: View {
                 importRow(label: ".mobileprovision", picked: mobURL != nil) { pickMob = true }
                     .stikImporter(isPresented: $pickMob,
                                   selectedURLs: .constant([]),
-                                  allowedContentTypes: [.mobileProvision],
+                                  allowedContentTypes: [UTType.item],
                                   allowsMultipleSelection: false) { mobURL = $0.first }
                 importRow(label: ".p12 file", picked: p12URL != nil) { pickP12 = true }
                     .stikImporter(isPresented: $pickP12,
                                   selectedURLs: .constant([]),
-                                  allowedContentTypes: [.p12],
+                                  allowedContentTypes: [UTType.item],
                                   allowsMultipleSelection: false) { p12URL = $0.first }
                 SecureField("p12 password", text: $password)
             }
