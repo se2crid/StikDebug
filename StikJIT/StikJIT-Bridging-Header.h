@@ -6,3 +6,4 @@
 #include "idevice/idevice.h"
 #include "idevice/heartbeat.h"
 #include "JSSupport/JSSupport.h"
+#include "idevice/ideviceinfo.h"

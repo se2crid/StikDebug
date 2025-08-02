@@ -26,18 +26,18 @@ struct MainTabView: View {
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
-            if enableAdvancedOptions {
                 ScriptListView()
                     .tabItem {
                         Label("Scripts", systemImage: "scroll")
                     }
-            }
-            if enableTesting {
                 IPAAppManagerView()
                     .tabItem {
                         Label("Testing", systemImage: "square.grid.2x2")
                     }
-            }
+            DeviceInfoView()
+                .tabItem {
+                    Label("Info", systemImage: "info.circle.fill")
+                }
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")

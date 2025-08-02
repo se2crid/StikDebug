@@ -275,11 +275,6 @@ struct SettingsView: View {
                                                    .foregroundColor(.primary)
                                                    .padding(.bottom, 4)
                                                
-                                               Toggle("Enable Advanced Options", isOn: $enableAdvancedOptions)
-                                                   .foregroundColor(.primary)
-                                                   .padding(.vertical, 6)
-
-                                               if enableAdvancedOptions {
                                                    Toggle("Run Default Script After Connecting", isOn: $useDefaultScript)
                                                        .foregroundColor(.primary)
                                                        .padding(.vertical, 6)
@@ -289,12 +284,6 @@ struct SettingsView: View {
                                                    Toggle("Enable Advanced Beta Options", isOn: $enableAdvancedBetaOptions)
                                                        .foregroundColor(.primary)
                                                        .padding(.vertical, 6)
-                                                   if enableAdvancedBetaOptions {
-                                                       Toggle("Enable Self Developed Application Testing", isOn: $enableTesting)
-                                                           .foregroundColor(.primary)
-                                                           .padding(.vertical, 6)
-                                                   }
-                                               }
                                            }
                                            .padding(.vertical, 20)
                                            .padding(.horizontal, 16)
