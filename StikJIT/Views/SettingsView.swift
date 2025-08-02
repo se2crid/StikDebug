@@ -281,9 +281,6 @@ struct SettingsView: View {
                                                    Toggle("Picture in Picture", isOn: $enablePiP)
                                                        .foregroundColor(.primary)
                                                        .padding(.vertical, 6)
-                                                   Toggle("Enable Advanced Beta Options", isOn: $enableAdvancedBetaOptions)
-                                                       .foregroundColor(.primary)
-                                                       .padding(.vertical, 6)
                                            }
                                            .padding(.vertical, 20)
                                            .padding(.horizontal, 16)
