@@ -143,7 +143,7 @@ struct MainTabView: View {
                          accentColor: accentColor)
                 .offset(
                     x: isTabBarHidden ? -UIScreen.main.bounds.width : 0,
-                    y: -20
+                    y: -40
                 )
                 .animation(.spring(response: 0.3, dampingFraction: 0.7),
                            value: isTabBarHidden)
