@@ -38,6 +38,12 @@ struct MainTabView: View {
                 .tabItem {
                     Label("Info", systemImage: "info.circle.fill")
                 }
+        #if DEBUG
+            LocationSimulatorView(deviceIp: "10.7.0.2")
+                .tabItem {
+                    Label("Location", systemImage: "globe.americas")
+                }
+        #endif
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
