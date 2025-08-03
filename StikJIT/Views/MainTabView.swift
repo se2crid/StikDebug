@@ -87,6 +87,14 @@ struct MainTabView: View {
             : Color(hex: customAccentColorHex) ?? .blue
     }
 
+    private var locationTabId: Int? {
+        #if DEBUG
+        return 3
+        #else
+        return nil
+        #endif
+    }
+
     private var tabs: [TabItem] {
         var items: [TabItem] = [
             TabItem(id: 0, title: "Home",    systemImage: "house"),
@@ -130,19 +138,27 @@ struct MainTabView: View {
             .accentColor(accentColor)
             .environment(\.accentColor, accentColor)
 
-            CustomTabBar(
-                items: tabs,
-                selection: $selection,
-                accentColor: accentColor
-            )
-            .offset(x: isTabBarHidden ? -UIScreen.main.bounds.width : 0,
-                    y: -40)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7),
-                       value: isTabBarHidden)
+            CustomTabBar(items: tabs,
+                         selection: $selection,
+                         accentColor: accentColor)
+                .offset(
+                    x: isTabBarHidden ? -UIScreen.main.bounds.width : 0,
+                    y: -20
+                )
+                .animation(.spring(response: 0.3, dampingFraction: 0.7),
+                           value: isTabBarHidden)
+        }
+        .onChange(of: selection) { new in
+            if let loc = locationTabId, new == loc {
+                withAnimation {
+                    isTabBarHidden = false
+                }
+            }
         }
         .gesture(
-            DragGesture(minimumDistance: 30, coordinateSpace: .local)
+            DragGesture(minimumDistance: 30, coordinateSpace: .global)
                 .onEnded { value in
+                    guard selection != locationTabId else { return }
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         if value.translation.width < -30 {
                             isTabBarHidden = true
