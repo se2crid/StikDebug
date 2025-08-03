@@ -81,10 +81,17 @@ struct LocationSimulatorView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("Location Simulator")
-                .font(.largeTitle.weight(.bold))
-                .padding(.top)
-
+            VStack{
+                Text("")
+                HStack() {
+                    Text("")
+                    Text("")
+                    Text("Location Simulator")
+                        .font(.largeTitle.bold())
+                        .padding(.top)
+                    Spacer()
+                }
+            }
             HStack {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.secondary)
