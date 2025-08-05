@@ -63,6 +63,7 @@ fileprivate struct FavoritesDockView: View {
     @Binding var selection: Int
     let accentColor: Color
     let progress: CGFloat
+    let bottomPadding: CGFloat
 
     var body: some View {
         let fade = 1 - smoothstep(progress, 0.30, 0.55)
@@ -84,6 +85,7 @@ fileprivate struct FavoritesDockView: View {
             Spacer()
         }
         .padding(.vertical, 10)
+        .padding(.bottom, bottomPadding)
         .opacity(fade)
         .offset(y: yLift)
         .animation(drawerSpring, value: progress)
@@ -105,6 +107,7 @@ fileprivate struct AppGridView: View {
     var body: some View {
         let fade = smoothstep(progress, 0.45, 0.75)
         let yRise: CGFloat = 14 * (1 - fade)
+
         ScrollView {
             LazyVGrid(columns: Self.columns, spacing: 16) {
                 ForEach(items.indices, id: \.self) { i in
@@ -161,6 +164,8 @@ fileprivate struct AppGridView: View {
             }
             .padding()
         }
+        .scrollDisabled(true)
+        .scrollIndicators(.hidden)
         .opacity(fade)
         .offset(y: yRise)
         .animation(drawerSpring, value: progress)
@@ -231,10 +236,13 @@ struct AppDrawer: View {
         GeometryReader { geo in
             let safeBottom = geo.safeAreaInsets.bottom
             let totalHeight = maxHeight + safeBottom
-            let closedY = geo.size.height - minHeight - safeBottom
+            let dockClearance: CGFloat = safeBottom + 16
+            let closedY = geo.size.height - minHeight - safeBottom - dockClearance
             let openY   = geo.size.height - totalHeight
             let travel  = closedY - openY
             let offsetY = closedY - progress * travel
+            let dockBottomPadding = safeBottom + 8
+
             ZStack {
                 if progress > 0 {
                     Color.clear
@@ -253,7 +261,8 @@ struct AppDrawer: View {
                         FavoritesDockView(favorites: favorites,
                                           selection: $selection,
                                           accentColor: accentColor,
-                                          progress: progress)
+                                          progress: progress,
+                                          bottomPadding: dockBottomPadding)
                             .padding(.top, 10)
                         AppGridView(items: items,
                                     selection: $selection,
