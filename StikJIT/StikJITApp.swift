@@ -864,6 +864,7 @@ func isPairing() -> Bool {
 }
 
 func startHeartbeatInBackground() {
+    BackgroundTaskManager.shared.begin()
     let heartBeatThread = Thread {
         let completionHandler: @convention(block) (Int32, String?) -> Void = { result, message in
             if result == 0 {
@@ -873,6 +874,7 @@ func startHeartbeatInBackground() {
                 if FileManager.default.fileExists(atPath: URL.documentsDirectory.appendingPathComponent("DDI/Image.dmg.trustcache").path) {
                     MountingProgress.shared.pubMount()
                 }
+                BackgroundTaskManager.shared.end()
             } else {
                 print("Error: \(message ?? "") (Code: \(result))")
                 DispatchQueue.main.async {
@@ -907,6 +909,7 @@ func startHeartbeatInBackground() {
                         }
                     }
                 }
+                BackgroundTaskManager.shared.end()
             }
         }
         JITEnableContext.shared.startHeartbeat(completionHandler: completionHandler, logger: nil)

@@ -305,12 +305,6 @@ struct HomeView: View {
                 startJITInBackground(bundleID: selectedBundle)
             }
         }
-        .pipify(isPresented: Binding(
-            get: { pipRequired && enablePiP },
-            set: { newValue in pipRequired = newValue }
-        )) {
-            RunJSViewPiP(model: $jsModel)
-        }
         .sheet(isPresented: $scriptViewShow) {
             NavigationView {
                 if let jsModel {
@@ -438,6 +432,7 @@ struct HomeView: View {
         isProcessing = true
         // Add log message
         LogManager.shared.addInfoLog("Starting Debug for \(bundleID ?? String(pid ?? 0))")
+        BackgroundTaskManager.shared.begin()
         
         DispatchQueue.global(qos: .background).async {
             var scriptData = scriptData
@@ -476,8 +471,6 @@ struct HomeView: View {
                 if triggeredByURLScheme {
                     usleep(500000)
                 }
-
-                pipRequired = true
             }
             
             let logger: LogFunc = { message in
@@ -505,7 +498,7 @@ struct HomeView: View {
                 }
             }
             isProcessing = false
-            pipRequired = false
+            BackgroundTaskManager.shared.end()
         }
     }
     
